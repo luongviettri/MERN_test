@@ -6,7 +6,10 @@ import PriceFilterComponent from '../components/filterQueryResultOptions/PriceFi
 import RatingFilterComponent from '../components/filterQueryResultOptions/RatingFilterComponent';
 import CategoryFilterComponent from '../components/filterQueryResultOptions/CategoryFilterComponent';
 import AttributesFilterComponent from '../components/filterQueryResultOptions/AttributesFilterComponent';
+
 const ProductListPage = () => {
+
+
   return (
     <Container fluid>
       <Row>

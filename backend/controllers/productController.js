@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const recordsPerPage = require('../config/pagination');
 const Product = require('../models/ProductModel');
@@ -280,15 +281,83 @@ const adminUpload = async (req, res, next) => {
     if (validateResult.error) {
       return res.status(400).send(validateResult.error);
     }
+    //! xử lý lưu ảnh từ client vào biến imagesTable, ảnh có thể là 1 object ảnh hoặc 1 mảng nhiều ảnh
+    let imagesTable = [];
+    if (Array.isArray(req.files.images)) {
+      imagesTable = req.files.images;
+    } else {
+      imagesTable.push(req.files.images);
+    }
+    //! tạo đường dẫn đến folder lưu ảnh ở bên phía front-end
+    const uploadDirectory = path.resolve(
+      __dirname,
+      '../../frontend',
+      'public',
+      'images',
+      'products'
+    );
+    //! tìm đến product muốn thêm ảnh để add tên ảnh vào database
+    let product = await Product.findById(req.query.productId).orFail();
 
+    // eslint-disable-next-line no-restricted-syntax
+    for (let image of imagesTable) {
+      //* path.extname(image.name)---> hiển thị phần đuôi file như png, jpg,...
+      //* uuidv4()---> tạo ra chuỗi string ngẫu nhiên để đặt tên cho ảnh( ảnh nên được đặt tên randomly trên server để tránh code hack từ client )
 
+      let fileName = uuidv4() + path.extname(image.name);
 
-    //! gửi thông tin ảnh được chọn về cho client
-    // if (Array.isArray(req.files.images)) {
-    //   res.send(`You sent ${req.files.images.length} images`);
-    // } else {
-    //   res.send('You sent only one image');
-    // }
+      //! xử lý thêm ảnh vào database
+      product.images.push({ path: `/images/products/${fileName}` });
+
+      //! định nghĩa cả 1 file ảnh: folder nào/tên + định dạng gì để move qua folder front-end
+      let uploadPath = `${uploadDirectory}/${fileName}`;
+
+      //! sau đó move ảnh đến front-end với folder đã dc đặt trước
+      // eslint-disable-next-line prefer-arrow-callback
+      image.mv(uploadPath, function (err) {
+        if (err) {
+          return res.status(500).send(err);
+        }
+      });
+    }
+    await product.save();
+
+    return res.send('Files uploaded!');
+  } catch (error) {
+    next(error);
+  }
+};
+
+const adminDeleteProductImage = async (req, res, next) => {
+  try {
+    //! path từ client gửi lên ban đầu sẽ có dạng /abc/def --> trùng với dấu / của route---> client sẽ phải encode----> lên server ta phải decode nó
+    const imagePath = decodeURIComponent(req.params.imagePath);
+
+    //! tạo abosolute path = hàm resolve
+    const finalPath = path.resolve('../frontend/public') + imagePath;
+
+    //! để xóa ảnh, ngoài xử lí xóa trên database thì phải xóa trên folder front-end--> có 2 thao tác
+
+    //todo: xóa ở folder, dùng hàm build-in của fs module---> https://www.geeksforgeeks.org/node-js-fs-unlink-method/
+
+    fs.unlink(finalPath, (err) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+    });
+
+    //todo: xóa ở database
+
+    //* The $pull operator removes from an existing array all instances of a value or values that match a specified condition.
+
+    //*: $pull ở trường hợp này ---> tìm đến product--> mảng images---> đến image nào có path trùng với path được gửi lên từ client---> xóa
+
+    await Product.findOneAndUpdate(
+      { _id: req.params.productId },
+      { $pull: { images: { path: imagePath } } }
+    ).orFail();
+
+    return res.end();
   } catch (error) {
     next(error);
   }
@@ -303,4 +372,5 @@ module.exports = {
   adminCreateProduct,
   adminUpdateProduct,
   adminUpload,
+  adminDeleteProductImage,
 };

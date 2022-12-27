@@ -16,7 +16,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 
 import ProtectedRoutesComponent from './components/ProtectedRoutesComponent';
-  
+
 // protected user pages:
 import UserProfilePage from './pages/user/UserProfilePage';
 import UserOrdersPage from './pages/user/UserOrdersPage';
@@ -36,7 +36,6 @@ import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
 import ScrollToTop from './utils/ScrollToTop';
 
 function App() {
-
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -81,7 +80,7 @@ function App() {
           />
           <Route path="/admin/orders" element={<AdminOrdersPage />} />
           <Route
-            path="/admin/order-details"
+            path="/admin/order-details/:id"
             element={<AdminOrderDetailsPage />}
           />
           <Route path="/admin/chats" element={<AdminChatsPage />} />

@@ -6,13 +6,13 @@ import {
   Alert,
   ListGroup,
   Button,
-} from 'react-bootstrap'
-import CartItemComponent from '../../components/CartItemComponent'
+} from 'react-bootstrap';
+import CartItemComponent from '../../components/CartItemComponent';
 
 const UserCartDetailsPage = () => {
   return (
     <Container fluid>
-      <Row className='mt-4'>
+      <Row className="mt-4">
         <h1>Cart Details</h1>
         <Col md={8}>
           <br />
@@ -26,21 +26,21 @@ const UserCartDetailsPage = () => {
             <Col md={6}>
               <h2>Payment method</h2>
               <Form.Select>
-                <option value='pp'>PayPal</option>
-                <option value='cod'>
+                <option value="pp">PayPal</option>
+                <option value="cod">
                   Cash On Delivery (delivery may be delayed)
                 </option>
               </Form.Select>
             </Col>
             <Row>
               <Col>
-                <Alert className='mt-3' variant='danger'>
+                <Alert className="mt-3" variant="danger">
                   Not delivered. In order to make order, fill out your profile
                   with correct address, city etc.
                 </Alert>
               </Col>
               <Col>
-                <Alert className='mt-3' variant='success'>
+                <Alert className="mt-3" variant="success">
                   Not paid yet
                 </Alert>
               </Col>
@@ -48,9 +48,18 @@ const UserCartDetailsPage = () => {
           </Row>
           <br />
           <h2>Order items</h2>
-          <ListGroup variant='flush'>
+          <ListGroup variant="flush">
             {Array.from({ length: 3 }).map((item, idx) => (
-              <CartItemComponent key={idx} />
+              <CartItemComponent
+                item={{
+                  image: { path: '/images/tablets-category.png' },
+                  name: 'Product name',
+                  price: 10,
+                  count: 10,
+                  quantity: 10,
+                }}
+                key={idx}
+              />
             ))}
           </ListGroup>
         </Col>
@@ -60,20 +69,20 @@ const UserCartDetailsPage = () => {
               <h3>Order summary</h3>
             </ListGroup.Item>
             <ListGroup.Item>
-              Items price (after tax): <span className='fw-bold'>$892</span>
+              Items price (after tax): <span className="fw-bold">$892</span>
             </ListGroup.Item>
             <ListGroup.Item>
-              Shipping: <span className='fw-bold'>included</span>
+              Shipping: <span className="fw-bold">included</span>
             </ListGroup.Item>
             <ListGroup.Item>
-              Tax: <span className='fw-bold'>included</span>
+              Tax: <span className="fw-bold">included</span>
             </ListGroup.Item>
-            <ListGroup.Item className='text-danger'>
-              Total price: <span className='fw-bold'>$904</span>
+            <ListGroup.Item className="text-danger">
+              Total price: <span className="fw-bold">$904</span>
             </ListGroup.Item>
             <ListGroup.Item>
-              <div className='d-grid gap-2'>
-                <Button size='lg' variant='danger' type='button'>
+              <div className="d-grid gap-2">
+                <Button size="lg" variant="danger" type="button">
                   Pay for the order
                 </Button>
               </div>
@@ -82,7 +91,7 @@ const UserCartDetailsPage = () => {
         </Col>
       </Row>
     </Container>
-  )
-}
+  );
+};
 
-export default UserCartDetailsPage
+export default UserCartDetailsPage;

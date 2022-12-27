@@ -13,8 +13,17 @@ import AddedToCartMessageComponent from '../components/AddedToCartMessageCompone
 
 import ImageZoom from 'js-image-zoom';
 import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../redux/actions/cartActions';
 
 const ProductDetailsPage = () => {
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.cart.value);
+
+  const addToCartHandler = () => {
+    dispatch(addToCart());
+  };
+
   var options = {
     // width: 400,
     // zoomWidth: 500,
@@ -60,7 +69,7 @@ const ProductDetailsPage = () => {
             <Col md={8}>
               <ListGroup variant="flush">
                 <ListGroup.Item>
-                  <h1>Product name</h1>
+                  <h1>Product name {products}</h1>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Rating readonly size={20} initialValue={4} /> (1)
@@ -90,7 +99,9 @@ const ProductDetailsPage = () => {
                   </Form.Select>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  <Button variant="danger">Add to cart</Button>
+                  <Button onClick={addToCartHandler} variant="danger">
+                    Add to cart
+                  </Button>
                 </ListGroup.Item>
               </ListGroup>
             </Col>
