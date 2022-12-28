@@ -11,6 +11,8 @@ import {
 } from 'react-bootstrap';
 
 import CartItemComponent from '../../../components/CartItemComponent';
+import { logout } from '../../../redux/actions/userActions';
+import { useDispatch } from 'react-redux';
 
 export default function OrderDetailsPageComponent({
   getOrder,
@@ -28,6 +30,8 @@ export default function OrderDetailsPageComponent({
     useState('Mark as delivered');
   const [cartItems, setCartItems] = useState([]);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getOrder(id)
       .then((order) => {
@@ -44,11 +48,7 @@ export default function OrderDetailsPageComponent({
         }
         setCartItems(order.cartItems);
       })
-      .catch((er) =>
-        console.log(
-          er.response.data.message ? er.response.data.message : er.response.data
-        )
-      );
+      .catch((er) => dispatch(logout()));
   }, [isDelivered, id]);
 
   return (

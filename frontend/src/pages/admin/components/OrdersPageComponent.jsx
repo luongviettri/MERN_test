@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Table } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import AdminLinksComponent from '../../../components/admin/AdminLinksComponent';
+import { logout } from '../../../redux/actions/userActions';
 
 export default function OrdersPageComponent({ getOrders }) {
   const [orders, setOrders] = useState([]);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getOrders()
       .then((orders) => setOrders(orders))
-      .catch((er) =>
-        console.log(
-          er.response.data.message ? er.response.data.message : er.response.data
-        )
-      );
+      .catch((er) => dispatch(logout()));
   }, []);
 
   return (

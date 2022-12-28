@@ -2,8 +2,6 @@ const jwt = require('jsonwebtoken');
 
 //! hàm này vẫn còn thiếu điều kiện user đã bị xóa hoặc user đã đổi mật khẩu--> cần tối ưu code
 const verifyIsLoggedIn = (req, res, next) => {
-  next();
-  return; // to do: remove later
   try {
     const token = req.cookies.access_token;
     //! nếu ko có token
@@ -24,8 +22,6 @@ const verifyIsLoggedIn = (req, res, next) => {
 };
 //! hàm này có thể tối ưu code hơn là gán cứng admin
 const verifyIsAdmin = (req, res, next) => {
-  next();
-  return; // to do: remove later
   if (req.user && req.user.isAdmin) {
     next();
   } else {

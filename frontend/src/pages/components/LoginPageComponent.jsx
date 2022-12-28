@@ -1,11 +1,16 @@
 import React from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import Spinner from 'react-bootstrap/Spinner';
-export default function LoginPageComponent({ loginUserApiRequest }) {
-  const [validated, setValidated] = useState(false);
+import { Link, useNavigate } from 'react-router-dom';
+// import Spinner from 'react-bootstrap/Spinner';
+export default function LoginPageComponent({
+  loginUserApiRequest,
+  reduxDispatch,
+  setReduxUserState,
+}) {
+  const navigate = useNavigate();
 
+  const [validated, setValidated] = useState(false);
   const [loginUserResponseState, setLoginUserResponseState] = useState({
     success: '',
     error: '',
@@ -15,7 +20,6 @@ export default function LoginPageComponent({ loginUserApiRequest }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
-
     const form = event.currentTarget.elements;
 
     const email = form.email.value;
@@ -24,14 +28,22 @@ export default function LoginPageComponent({ loginUserApiRequest }) {
 
     if (event.currentTarget.checkValidity() === true && email && password) {
       setLoginUserResponseState({ loading: true });
-
       loginUserApiRequest(email, password, doNotLogout)
         .then((res) => {
+          console.log('res: ', res);
           setLoginUserResponseState({
             success: res.success,
             loading: false,
             error: '',
           });
+
+          if (res.userLoggedIn) {
+            reduxDispatch(setReduxUserState(res.userLoggedIn));
+          }
+          //! sử dụng window.location.href để load lại trang
+          if (res.success === 'user logged in' && !res.userLoggedIn.isAdmin)
+            window.location.href = '/user';
+          else window.location.href = '/admin/orders';
         })
         .catch((er) =>
           setLoginUserResponseState({
@@ -84,19 +96,18 @@ export default function LoginPageComponent({ loginUserApiRequest }) {
             </Row>
 
             <Button variant="primary" type="submit">
-              {loginUserResponseState &&
+              {/* {loginUserResponseState &&
               loginUserResponseState.loading === true ? (
-                // <Spinner
-                //   as="span"
-                //   animation="border"
-                //   size="sm"
-                //   role="status"
-                //   aria-hidden="true"
-                // />
-                <div>a</div>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
               ) : (
                 ''
-              )}
+              )} */}
               Login
             </Button>
             <Alert

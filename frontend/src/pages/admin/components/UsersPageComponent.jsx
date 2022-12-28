@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Table, Button } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import AdminLinksComponent from '../../../components/admin/AdminLinksComponent';
+import { logout } from '../../../redux/actions/userActions';
 
 export default function UsersPageComponent({ fetchUsers, deleteUser }) {
   const [users, setUsers] = useState([]);
   const [userDeleted, setUserDeleted] = useState(false);
+  const dispatch = useDispatch();
   const deleteHandler = async (userId) => {
     if (window.confirm('Are you sure?')) {
       const data = await deleteUser(userId);
@@ -20,11 +23,13 @@ export default function UsersPageComponent({ fetchUsers, deleteUser }) {
     fetchUsers(abctrl)
       .then((res) => setUsers(res))
       .catch((error) => {
-        console.log(
-          error.response.data.message
-            ? error.response.data.message
-            : error.response.data
-        );
+        dispatch(logout());
+
+        // console.log(
+        //   error.response.data.message
+        //     ? error.response.data.message
+        //     : error.response.data
+        // );
       }); //! tối ưu = redux thunk
     return () => abctrl.abort(); //! nghĩa là nếu đang gọi database mà component unmount thì dừng request luôn ( tránh memory leak )
   }, [userDeleted]);

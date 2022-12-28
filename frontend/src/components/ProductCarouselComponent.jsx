@@ -1,17 +1,17 @@
-import { Carousel } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import { Carousel } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const ProductCarouselComponent = () => {
   const cursorP = {
-    cursor: "pointer",
+    cursor: 'pointer',
   };
   return (
     <Carousel>
       <Carousel.Item>
         <img
-          crossorigin="anonymous"
+          crossOrigin="anonymous"
           className="d-block w-100"
-          style={{ height: "300px", objectFit: "cover" }}
+          style={{ height: '300px', objectFit: 'cover' }}
           src="/images/carousel/carousel-1.png"
           alt="First slide"
         />
@@ -25,7 +25,7 @@ const ProductCarouselComponent = () => {
       <Carousel.Item>
         <img
           className="d-block w-100"
-          style={{ height: "300px", objectFit: "cover" }}
+          style={{ height: '300px', objectFit: 'cover' }}
           src="/images/carousel/carousel-2.png"
           alt="Second slide"
         />
@@ -40,7 +40,7 @@ const ProductCarouselComponent = () => {
       <Carousel.Item>
         <img
           className="d-block w-100"
-          style={{ height: "300px", objectFit: "cover" }}
+          style={{ height: '300px', objectFit: 'cover' }}
           src="/images/carousel/carousel-3.png"
           alt="Third slide"
         />

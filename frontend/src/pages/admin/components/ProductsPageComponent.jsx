@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Row, Table } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import AdminLinksComponent from '../../../components/admin/AdminLinksComponent';
+import { logout } from '../../../redux/actions/userActions';
 
 export default function ProductsPageComponent({
   fetchProducts,
@@ -9,7 +11,7 @@ export default function ProductsPageComponent({
 }) {
   const [products, setProducts] = useState([]);
   const [productDeleted, setProductDeleted] = useState(false);
-
+  const dispatch = useDispatch();
   const deleteHandler = async (productId) => {
     if (window.confirm('Are you sure?')) {
       const data = await deleteProduct(productId);
@@ -24,17 +26,15 @@ export default function ProductsPageComponent({
     fetchProducts(abctrl)
       .then((res) => setProducts(res))
       .catch((er) => {
-        console.log('vo day');
-        // console.log(
-        //     er.response.data.message ? er.response.data.message : er.response.data
-        // )
-        setProducts([
-          {
-            name: er.response.data.message
-              ? er.response.data.message
-              : er.response.data,
-          },
-        ]);
+        dispatch(logout());
+
+        // setProducts([
+        //   {
+        //     name: er.response.data.message
+        //       ? er.response.data.message
+        //       : er.response.data,
+        //   },
+        // ]);
       });
     return () => abctrl.abort();
   }, [productDeleted]);
