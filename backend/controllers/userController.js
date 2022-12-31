@@ -138,7 +138,7 @@ const updateUserProfile = async (req, res, next) => {
     //! phải gán lại tất cả vì là hàm PUT, có thể tối ưu = hàm patch, nhưng gán cả password thì ko thực tế, có thể tối ưu = cách tạo ra một route riêng để xử lí quên mật khẩu, và nên xử lí isModified trong userModel
     user.name = req.body.name || user.name;
     user.lastName = req.body.lastName || user.lastName;
-    user.email = req.body.email || user.email;
+    // user.email = req.body.email || user.email; //2: bỏ dòng này vì bên client bị disable
     user.phoneNumber = req.body.phoneNumber;
     user.address = req.body.address;
     user.country = req.body.country;
