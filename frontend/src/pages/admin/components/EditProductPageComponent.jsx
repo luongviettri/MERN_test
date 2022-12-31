@@ -30,9 +30,14 @@ export default function EditProductPageComponent({
 }) {
   const [attributesFromDb, setAttributesFromDb] = useState([]);
   const [attributesTable, setAttributesTable] = useState([]); //! dùng cái này cho bảng
+  const [newAttrKey, setNewAttrKey] = useState(false);
+  const [newAttrValue, setNewAttrValue] = useState(false);
 
   const attrVal = useRef(null);
   const attrKey = useRef(null);
+
+  const createNewAttrKey = useRef(null);
+  const createNewAttrVal = useRef(null);
 
   const [validated, setValidated] = useState(false);
   const [product, setProduct] = useState({});
@@ -196,6 +201,44 @@ export default function EditProductPageComponent({
     setAttributesTable((table) => table.filter((item) => item.key !== key));
   };
 
+  //!start các hàm để xử lý preventDefault và xử lý thêm attributes khi nhập liệu = tay( vì có thể thêm attribute = chọn thẻ option )
+  const checkKeyDown = (e) => {
+    if (e.code === 'Enter') e.preventDefault();
+  };
+  //2: xử lý nhận key
+
+  const newAttrKeyHandler = (e) => {
+    e.preventDefault();
+    if (e.keyCode && e.keyCode === 13) {
+      setNewAttrKey(e.target.value);
+      addNewAttributeManually(e);
+    }
+  };
+  //2: xử lý nhận value
+
+  const newAttrValueHandler = (e) => {
+    e.preventDefault();
+    if (e.keyCode && e.keyCode === 13) {
+      setNewAttrValue(e.target.value);
+      addNewAttributeManually(e);
+    }
+  };
+  //2: hàm xử lý nếu có cả key và value có giá trị thì mới add attribute
+  const addNewAttributeManually = (e) => {
+    if (e.keyCode && e.keyCode === 13) {
+      //todo: lưu ý code chỗ này bị sai, setState là hàm async cho nên khi lần đầu được gọi nó vẫn mang giá trị false--> ko đi vào trong if, cần sửa lại code xử lý useState  https://betterprogramming.pub/synchronous-state-in-react-using-hooks-dc77f43d8521
+      if (newAttrKey && newAttrValue) {
+        setAttributesTableWrapper(newAttrKey, newAttrValue);
+        e.target.value = '';
+        createNewAttrKey.current.value = '';
+        createNewAttrVal.current.value = '';
+        setNewAttrKey(false);
+        setNewAttrValue(false);
+      }
+    }
+  };
+  //! end các hàm...
+
   return (
     <Container>
       <Row className="justify-content-md-center mt-5">
@@ -206,7 +249,12 @@ export default function EditProductPageComponent({
         </Col>
         <Col md={6}>
           <h1>Edit product</h1>
-          <Form noValidate validated={validated} onSubmit={handleSubmit}>
+          <Form
+            noValidate
+            validated={validated}
+            onSubmit={handleSubmit}
+            onKeyDown={(e) => checkKeyDown(e)}
+          >
             <Form.Group className="mb-3" controlId="formBasicName">
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -346,6 +394,9 @@ export default function EditProductPageComponent({
                     placeholder="first choose or create category"
                     name="newAttrKey"
                     type="text"
+                    onKeyUp={newAttrKeyHandler}
+                    required={newAttrValue}
+                    ref={createNewAttrKey}
                   />
                 </Form.Group>
               </Col>
@@ -356,17 +407,19 @@ export default function EditProductPageComponent({
                 >
                   <Form.Label>Attribute value</Form.Label>
                   <Form.Control
+                    ref={createNewAttrVal}
                     disabled={categoryChoosen === 'Choose category'}
                     placeholder="first choose or create category"
-                    required={true}
+                    required={newAttrKey}
                     name="newAttrValue"
                     type="text"
+                    onKeyUp={newAttrValueHandler}
                   />
                 </Form.Group>
               </Col>
             </Row>
 
-            <Alert variant="primary">
+            <Alert show={newAttrKey && newAttrValue} variant="primary">
               After typing attribute key and value press enterr on one of the
               field
             </Alert>
