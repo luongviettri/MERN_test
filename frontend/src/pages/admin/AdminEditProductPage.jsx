@@ -1,6 +1,12 @@
 import EditProductPageComponent from './components/EditProductPageComponent';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { saveAttributeToCatDoc } from '../../redux/actions/categoryActions';
+import { useDispatch } from 'react-redux';
+import {
+  uploadImagesApiRequest,
+  uploadImagesCloudinaryApiRequest,
+} from './utils/utils';
 
 const fetchProduct = async (productId) => {
   const { data } = await axios.get(`/api/products/get-one/${productId}`);
@@ -17,11 +23,30 @@ const updateProductApiRequest = async (productId, formInputs) => {
 const AdminEditProductPage = () => {
   const { categories } = useSelector((state) => state.getCategories);
 
+  const reduxDispatch = useDispatch();
+
+  const imageDeleteHandler = async (imagePath, productId) => {
+    let encoded = encodeURIComponent(imagePath);
+    if (process.env.NODE_ENV === 'production') {
+      //todo: tí nữa change to !==
+      await axios.delete(`/api/products/admin/image/${encoded}/${productId}`);
+    } else {
+      await axios.delete(
+        `/api/products/admin/image/${encoded}/${productId}?cloudinary=true`
+      );
+    }
+  };
+
   return (
     <EditProductPageComponent
       categories={categories}
       fetchProduct={fetchProduct}
       updateProductApiRequest={updateProductApiRequest}
+      reduxDispatch={reduxDispatch}
+      saveAttributeToCatDoc={saveAttributeToCatDoc}
+      imageDeleteHandler={imageDeleteHandler}
+      uploadImagesApiRequest={uploadImagesApiRequest}
+      uploadImagesCloudinaryApiRequest={uploadImagesCloudinaryApiRequest}
     />
   );
 };

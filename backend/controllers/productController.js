@@ -272,6 +272,21 @@ const adminUpdateProduct = async (req, res, next) => {
 };
 
 const adminUpload = async (req, res, next) => {
+  //* nếu môi trường production thì lưu link ảnh cloudinary, nếu là dev thì lưu ảnh trên local disk
+
+  //2: nếu môi trường production---> lưu link ảnh của cloudinary lên database
+  if (req.query.cloudinary === 'true') {
+    try {
+      let product = await Product.findById(req.query.productId).orFail();
+      console.log('product: ', product);
+      product.images.push({ path: req.body.url });
+      await product.save();
+    } catch (err) {
+      next(err);
+    }
+    return;
+  }
+  //2: nếu môi trường development ---> lưu link ảnh vào local disk
   try {
     if (!req.files || !!req.files.images === false) {
       return res.status(400).send('No files were uploaded.');
@@ -329,10 +344,22 @@ const adminUpload = async (req, res, next) => {
 };
 
 const adminDeleteProductImage = async (req, res, next) => {
-  try {
-    //! path từ client gửi lên ban đầu sẽ có dạng /abc/def --> trùng với dấu / của route---> client sẽ phải encode----> lên server ta phải decode nó
-    const imagePath = decodeURIComponent(req.params.imagePath);
+  //! path từ client gửi lên ban đầu sẽ có dạng /abc/def --> trùng với dấu / của route---> client sẽ phải encode----> lên server ta phải decode nó
+  const imagePath = decodeURIComponent(req.params.imagePath);
+  if (req.query.cloudinary === 'true') {
+    try {
+      await Product.findOneAndUpdate(
+        { _id: req.params.productId },
+        { $pull: { images: { path: imagePath } } }
+      ).orFail();
+      return res.end();
+    } catch (er) {
+      next(er);
+    }
+    return;
+  }
 
+  try {
     //! tạo abosolute path = hàm resolve
     const finalPath = path.resolve('../frontend/public') + imagePath;
 

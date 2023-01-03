@@ -14,6 +14,11 @@ import React, { useState, useEffect, Fragment, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import {
+  changeCategory,
+  setValuesForAttrFromDbSelectForm,
+  setAttributesTableWrapper,
+} from './utils/utils';
 
 const onHover = {
   cursor: 'pointer',
@@ -27,12 +32,20 @@ export default function EditProductPageComponent({
   categories,
   fetchProduct,
   updateProductApiRequest,
+  reduxDispatch,
+  saveAttributeToCatDoc,
+  imageDeleteHandler,
+  uploadHandler,
+  uploadImagesApiRequest,
+  uploadImagesCloudinaryApiRequest,
 }) {
   const [attributesFromDb, setAttributesFromDb] = useState([]);
   const [attributesTable, setAttributesTable] = useState([]); //! dùng cái này cho bảng
   const [newAttrKey, setNewAttrKey] = useState(false);
   const [newAttrValue, setNewAttrValue] = useState(false);
-
+  const [imageRemoved, setImageRemoved] = useState(false);
+  const [isUploading, setIsUploading] = useState('');
+  const [imageUploaded, setImageUploaded] = useState(false);
   const attrVal = useRef(null);
   const attrKey = useRef(null);
 
@@ -53,9 +66,11 @@ export default function EditProductPageComponent({
 
   useEffect(() => {
     fetchProduct(id)
-      .then((product) => setProduct(product))
+      .then((product) => {
+        setProduct(product);
+      })
       .catch((er) => console.log(er));
-  }, [id]);
+  }, [id, imageRemoved, imageUploaded]);
   //! useEffect này để set attributes lên page
   useEffect(() => {
     let categoryOfEditedProduct = categories.find((item) => {
@@ -114,87 +129,16 @@ export default function EditProductPageComponent({
 
     setValidated(true);
   };
-  //! hàm xử lý lấy values của từng key
-  const setValuesForAttrFromDbSelectForm = (e) => {
-    if (e.target.value !== 'Choose attribute') {
-      //! ở trên đã lấy ra được keys của attributes, giờ sẽ lấy ra values của từng key, lặp để chọn ra key cụ thể
-      let selectedAttr = attributesFromDb.find(
-        (item) => item.key === e.target.value
-      );
-      //! tham chiếu đến useRef attrVal
-      let valuesForAttrKeys = attrVal.current;
 
-      //! kiểm tra ví dụ color có các value như xanh, đỏ, vàng --> thì xử lý in ra
-      if (selectedAttr && selectedAttr.value.length > 0) {
-        //2: nếu như bên attribute value có các options của key trước đó rồi thì phải xóa các values này đi
-
-        while (valuesForAttrKeys.options.length) {
-          valuesForAttrKeys.remove(0);
-        }
-        //2: sau đó tạo các thẻ options = câu lệnh js
-        //3: tạo thẻ choose attribute value trước
-        //3: tạo các value còn lại sau
-
-        valuesForAttrKeys.options.add(new Option('Choose attribute value'));
-        selectedAttr.value.map((item) => {
-          valuesForAttrKeys.add(new Option(item));
-          return '';
-        });
-      }
-    }
-  };
-  //! hàm xử lý đồng nhất giữa category và phần attributes bên dưới--> có 3 cấp---> category---> attributes key---> attributes value
-  const changeCategory = (e) => {
-    const highLevelCategory = e.target.value.split('/')[0];
-    const highLevelCategoryAllData = categories.find(
-      (cat) => cat.name === highLevelCategory
-    );
-    if (highLevelCategoryAllData && highLevelCategoryAllData.attrs) {
-      setAttributesFromDb(highLevelCategoryAllData.attrs);
-    } else {
-      setAttributesFromDb([]);
-    }
-    setCategoryChoosen(e.target.value); //2: chỗ này để lấy giá trị nếu category = choose category----> cài giá trị để disable nút tự tạo attribute
-  };
   //! hàm dùng để tự động thêm attribute (key,value) từ category vào attribute của product
   const attributeValueSelected = (e) => {
     if (e.target.value !== 'Choose attribute value') {
-      setAttributesTableWrapper(attrKey.current.value, e.target.value);
+      setAttributesTableWrapper(
+        attrKey.current.value,
+        e.target.value,
+        setAttributesTable
+      );
     }
-  };
-
-  const setAttributesTableWrapper = (key, val) => {
-    //! setAttributesTable là 1 setter của useState===> cần optimize tách riêng hàm ra cho dễ maintain code
-
-    setAttributesTable((attr) => {
-      //2: nếu product đã có tồn tại attributes thì phải phân tích attribute.key có trùng với attribute.key đang được đưa vào hay ko, nếu có thì thay thế, ko thì tạo mới
-
-      if (attr.length !== 0) {
-        var keyExistsInOldTable = false;
-        //3: tạo mảng
-
-        let modifiedTable = attr.map((item) => {
-          //todo: nếu attribute.key đã tồn tại thì sẽ thay thế
-
-          if (item.key === key) {
-            keyExistsInOldTable = true;
-            item.value = val;
-            return item;
-          } else {
-            //todo: nếu attribute.key ko tồn tại thì trả về như cũ
-
-            return item;
-          }
-        });
-        //3: đến đây mới check để return vào setter của react State
-        if (keyExistsInOldTable) return [...modifiedTable];
-        else return [...modifiedTable, { key: key, value: val }];
-      } else {
-        //2: nếu product chưa tồn tại attributes thì đơn giản thêm vào thôi
-
-        return [{ key: key, value: val }];
-      }
-    });
   };
 
   const deleteAttribute = (key) => {
@@ -209,26 +153,30 @@ export default function EditProductPageComponent({
 
   const newAttrKeyHandler = (e) => {
     e.preventDefault();
-    if (e.keyCode && e.keyCode === 13) {
-      setNewAttrKey(e.target.value);
-      addNewAttributeManually(e);
-    }
+    setNewAttrKey(e.target.value);
+    addNewAttributeManually(e);
   };
   //2: xử lý nhận value
 
   const newAttrValueHandler = (e) => {
     e.preventDefault();
-    if (e.keyCode && e.keyCode === 13) {
-      setNewAttrValue(e.target.value);
-      addNewAttributeManually(e);
-    }
+    setNewAttrValue(e.target.value);
+    addNewAttributeManually(e);
   };
+
   //2: hàm xử lý nếu có cả key và value có giá trị thì mới add attribute
   const addNewAttributeManually = (e) => {
     if (e.keyCode && e.keyCode === 13) {
-      //todo: lưu ý code chỗ này bị sai, setState là hàm async cho nên khi lần đầu được gọi nó vẫn mang giá trị false--> ko đi vào trong if, cần sửa lại code xử lý useState  https://betterprogramming.pub/synchronous-state-in-react-using-hooks-dc77f43d8521
+      //todo: lưu ý code chỗ này bị sai, setState là hàm async cho nên khi lần đầu được gọi nó vẫn mang giá trị false--> ko đi vào trong if, cần sửa lại code xử lý useState  https://betterprogramming.pub/synchronous-state-in-react-using-hooks-dc77f43d8521 , code vẫn chạy được là vì may mắn
       if (newAttrKey && newAttrValue) {
-        setAttributesTableWrapper(newAttrKey, newAttrValue);
+        setAttributesTableWrapper(newAttrKey, newAttrValue, setAttributesTable);
+
+        //! gọi API để thêm attribute
+
+        reduxDispatch(
+          saveAttributeToCatDoc(newAttrKey, newAttrValue, categoryChoosen)
+        );
+
         e.target.value = '';
         createNewAttrKey.current.value = '';
         createNewAttrVal.current.value = '';
@@ -302,7 +250,14 @@ export default function EditProductPageComponent({
                 required
                 name="category"
                 aria-label="Default select example"
-                onChange={changeCategory}
+                onChange={(e) =>
+                  changeCategory(
+                    e,
+                    categories,
+                    setAttributesFromDb,
+                    setCategoryChoosen
+                  )
+                }
               >
                 <option value="Choose category">Choose category</option>
                 {categories.map((category, idx) => {
@@ -328,7 +283,13 @@ export default function EditProductPageComponent({
                       name="atrrKey"
                       aria-label="Default select example"
                       ref={attrKey}
-                      onChange={setValuesForAttrFromDbSelectForm}
+                      onChange={(e) =>
+                        setValuesForAttrFromDbSelectForm(
+                          e,
+                          attrVal,
+                          attributesFromDb
+                        )
+                      }
                     >
                       <option>Choose attribute</option>
                       {attributesFromDb.map((item, idx) => (
@@ -390,13 +351,13 @@ export default function EditProductPageComponent({
                 <Form.Group className="mb-3" controlId="formBasicNewAttribute">
                   <Form.Label>Create new attribute</Form.Label>
                   <Form.Control
+                    ref={createNewAttrKey}
                     disabled={categoryChoosen === 'Choose category'}
                     placeholder="first choose or create category"
                     name="newAttrKey"
                     type="text"
                     onKeyUp={newAttrKeyHandler}
                     required={newAttrValue}
-                    ref={createNewAttrKey}
                   />
                 </Form.Group>
               </Col>
@@ -435,11 +396,49 @@ export default function EditProductPageComponent({
                         src={image.path ?? null}
                         fluid
                       />
-                      <i style={onHover} className="bi bi-x text-danger"></i>
+                      <i
+                        style={onHover}
+                        onClick={() =>
+                          imageDeleteHandler(image.path, id).then((data) =>
+                            setImageRemoved(!imageRemoved)
+                          )
+                        }
+                        className="bi bi-x text-danger"
+                      ></i>
                     </Col>
                   ))}
               </Row>
-              <Form.Control required type="file" multiple />
+              <Form.Control
+                type="file"
+                multiple
+                onChange={(e) => {
+                  setIsUploading('upload files in progress ...');
+                  if (process.env.NODE_ENV !== 'production') {
+                    // to do: change to !==
+                    uploadImagesApiRequest(e.target.files, id)
+                      .then((data) => {
+                        setIsUploading('upload file completed');
+                        setImageUploaded(!imageUploaded);
+                      })
+                      .catch((er) =>
+                        setIsUploading(
+                          er.response.data.message
+                            ? er.response.data.message
+                            : er.response.data
+                        )
+                      );
+                  } else {
+                    uploadImagesCloudinaryApiRequest(e.target.files, id);
+                    setIsUploading(
+                      'upload file completed. wait for the result take effect, refresh also if neccassry'
+                    );
+                    setTimeout(() => {
+                      setImageUploaded(!imageUploaded);
+                    }, 5000);
+                  }
+                }}
+              />
+              {isUploading}
             </Form.Group>
             <Button variant="primary" type="submit">
               UPDATE

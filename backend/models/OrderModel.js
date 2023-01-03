@@ -58,4 +58,12 @@ const orderSchema = mongoose.Schema(
 );
 
 const Order = mongoose.model('Order', orderSchema);
+
+Order.watch().on('change', (data) => {
+  if (data.operationType === 'insert') {
+    // eslint-disable-next-line no-undef
+    io.emit('newOrder', data.fullDocument);
+  }
+});
+
 module.exports = Order;

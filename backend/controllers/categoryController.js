@@ -71,17 +71,26 @@ const saveAttr = async (req, res, next) => {
       // eslint-disable-next-line array-callback-return
       categoryExitsts.attrs.map((attribute, index) => {
         //*: check xem có key đó chưa
+        //2 nếu đã có key này
+
+        console.log('attribute.key === key: ', attribute.key === key);
+        console.log('attribute.key: ', attribute.key);
+        console.log('key: ', key);
         if (attribute.key === key) {
           keyDoesNotExistsInDatabase = false;
+          console.log('len day');
           //! copy mảng mới
           let copyAttributeValues = [...categoryExitsts.attrs[index].value];
           copyAttributeValues.push(val);
           let newAttributeValues = [...new Set(copyAttributeValues)];
-        }
-        if (keyDoesNotExistsInDatabase) {
-          categoryExitsts.attrs.push({ key: key, value: [val] });
+          categoryExitsts.attrs[index].value = newAttributeValues;
         }
       });
+      //2 nếu chưa có key này
+      console.log('keyDoesNotExistsInDatabase: ', keyDoesNotExistsInDatabase);
+      if (keyDoesNotExistsInDatabase) {
+        categoryExitsts.attrs.push({ key: key, value: [val] });
+      }
     } else {
       //todo: nếu như attrs chưa có ==> thêm cặp key-value vào
       categoryExitsts.attrs.push({ key: key, value: [val] });

@@ -67,7 +67,7 @@ export default function UsersPageComponent({ fetchUsers, deleteUser }) {
                   )}
                 </td>
                 <td>
-                  <LinkContainer to="/admin/edit-user">
+                  <LinkContainer to={`/admin/edit-user/${user._id}`}>
                     <Button className="btn-sm">
                       <i className="bi bi-pencil-square"></i>
                     </Button>

@@ -1,6 +1,7 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
+import { adminChatReducer } from './reducers/adminChatReducers';
 import { cartReducer } from './reducers/cartReducers';
 import { getCategoriesReducer } from './reducers/categoryReducers';
 import { userRegisterLoginReducer } from './reducers/userReducers';
@@ -10,6 +11,7 @@ const reducer = combineReducers({
   cart: cartReducer,
   userRegisterLogin: userRegisterLoginReducer,
   getCategories: getCategoriesReducer,
+  adminChat: adminChatReducer,
 });
 
 //! hành động vào trong localStorage tìm giỏ hàng để đưa vào trang, cần tối ưu trong reducer riêng
