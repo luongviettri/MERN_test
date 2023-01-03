@@ -27,7 +27,7 @@ const getProducts = async (req, res, next) => {
     const categoryName = req.params.categoryName || '';
     if (categoryName) {
       queryCondition = true;
-      const condition = categoryName.replaceAll(',', '/');
+      const condition = categoryName.replace(/,/g, '/');
 
       const regEx = new RegExp(`^${condition}`); //! dùng để search tất cả các category bắt đầu = condition cần tìm
       categoryQueryCondition = { category: regEx };
