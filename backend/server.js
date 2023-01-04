@@ -98,7 +98,7 @@ connectDB();
 app.use('/api', apiRoutes);
 
 if (process.env.NODE_ENV === 'production') {
-  //! chưa hiểu đoạn này làm gì
+  //! đoạn  này để deploy
   app.use(express.static(path.join(__dirname, '../frontend/build')));
   app.get('*', (req, res) =>
     res.sendFile(path.resolve(__dirname, '../frontend', 'build', 'index.html'))

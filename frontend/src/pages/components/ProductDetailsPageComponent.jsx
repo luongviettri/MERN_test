@@ -16,13 +16,13 @@ import { useEffect, useState, useRef } from 'react';
 import MetaComponent from '../../components/MetaComponent';
 
 import { useParams } from 'react-router-dom';
+import catchAsync from '../../utils/catchAsync';
+import { productService } from '../../services/productService';
 
 const ProductDetailsPageComponent = ({
-  addToCartReduxAction,
-  reduxDispatch,
-  getProductDetails,
+  addToCartAction,
+  dispatch,
   userInfo,
-  writeReviewApiRequest,
 }) => {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
@@ -35,7 +35,7 @@ const ProductDetailsPageComponent = ({
   const messagesEndRef = useRef(null);
 
   const addToCartHandler = () => {
-    reduxDispatch(addToCartReduxAction(id, quantity));
+    dispatch(addToCartAction(id, quantity));
     setShowCartMessage(true);
   };
 
@@ -65,17 +65,21 @@ const ProductDetailsPageComponent = ({
     }
   });
 
+  const handleGetProductDetail = catchAsync(async (id) => {
+    const { data: productDetail } = await productService.getProductDetail(id);
+    setProduct(productDetail);
+    setLoading(false);
+  });
+
+  const handleWriteReview = catchAsync(async (productID, formInputs) => {
+    const { data } = await productService.writeReview(productID, formInputs);
+    if (data === 'review created') {
+      setProductReviewed('You successfuly reviewed the page!');
+    }
+  });
+
   useEffect(() => {
-    getProductDetails(id)
-      .then((data) => {
-        setProduct(data);
-        setLoading(false);
-      })
-      .catch((er) =>
-        setError(
-          er.response.data.message ? er.response.data.message : er.response.data
-        )
-      );
+    handleGetProductDetail(id);
   }, [id, productReviewed]);
 
   const sendReviewHandler = (e) => {
@@ -86,19 +90,7 @@ const ProductDetailsPageComponent = ({
       rating: form.rating.value,
     };
     if (e.currentTarget.checkValidity() === true) {
-      writeReviewApiRequest(product._id, formInputs)
-        .then((data) => {
-          if (data === 'review created') {
-            setProductReviewed('You successfuly reviewed the page!');
-          }
-        })
-        .catch((er) =>
-          setProductReviewed(
-            er.response.data.message
-              ? er.response.data.message
-              : er.response.data
-          )
-        );
+      handleWriteReview(product._id, formInputs);
     }
   };
 

@@ -1,18 +1,20 @@
 import EditUserPageComponent from './components/EditUserPageComponent';
 import axios from 'axios';
+import { userService } from '../../services/userService';
 
 const fetchUser = async (userId) => {
-  const { data } = await axios.get(`/api/users/${userId}`);
+  const { data } = await userService.fetchUserAdmin(userId);
   return data;
 };
 
 const updateUserApiRequest = async (userId, name, lastName, email, isAdmin) => {
-  const { data } = await axios.put(`/api/users/${userId}`, {
+  const { data } = await userService.updateUserAdmin(
+    userId,
     name,
     lastName,
     email,
-    isAdmin,
-  });
+    isAdmin
+  );
   return data;
 };
 

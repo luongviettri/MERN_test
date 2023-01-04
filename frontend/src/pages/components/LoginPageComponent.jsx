@@ -1,20 +1,40 @@
 import React from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import catchAsync from '../../utils/catchAsync';
+import { authenService } from '../../services/authenService';
+import { saveUserInformation } from '../../utils/authenUtils';
 // import Spinner from 'react-bootstrap/Spinner';
-export default function LoginPageComponent({
-  loginUserApiRequest,
-  reduxDispatch,
-  setReduxUserState,
-}) {
-  const navigate = useNavigate();
-
+export default function LoginPageComponent({ dispatch, loginAction }) {
   const [validated, setValidated] = useState(false);
   const [loginUserResponseState, setLoginUserResponseState] = useState({
     success: '',
     error: '',
     loading: false,
+  });
+
+  const handleLoginUser = catchAsync(async (email, password, doNotLogout) => {
+    //! gửi thông tin lên backend yêu cầu login
+    const { data } = await authenService.login(email, password, doNotLogout);
+    //! lưu dữ liệu user lên browser
+    saveUserInformation(data);
+    //! set lại các giá trị loading và success
+    setLoginUserResponseState({
+      ...loginUserResponseState,
+      loading: false,
+      success: data.success,
+    });
+    //! gửi thông tin lên redux để lưu lại dữ liệu sử dụng sau này
+    if (data.userLoggedIn) {
+      dispatch(loginAction(data.userLoggedIn));
+    }
+    //! sau đó load lại web
+    if (data.success === 'user logged in' && !data.userLoggedIn.isAdmin) {
+      window.location.href = '/user';
+    } else {
+      window.location.href = '/admin/orders';
+    }
   });
 
   const handleSubmit = (event) => {
@@ -25,33 +45,9 @@ export default function LoginPageComponent({
     const email = form.email.value;
     const password = form.password.value;
     const doNotLogout = form.doNotLogout.checked;
-
     if (event.currentTarget.checkValidity() === true && email && password) {
-      setLoginUserResponseState({ loading: true });
-      loginUserApiRequest(email, password, doNotLogout)
-        .then((res) => {
-          console.log('res: ', res);
-          setLoginUserResponseState({
-            success: res.success,
-            loading: false,
-            error: '',
-          });
-
-          if (res.userLoggedIn) {
-            reduxDispatch(setReduxUserState(res.userLoggedIn));
-          }
-          //! sử dụng window.location.href để load lại trang
-          if (res.success === 'user logged in' && !res.userLoggedIn.isAdmin)
-            window.location.href = '/user';
-          else window.location.href = '/admin/orders';
-        })
-        .catch((er) =>
-          setLoginUserResponseState({
-            error: er.response.data.message
-              ? er.response.data.message
-              : er.response.data,
-          })
-        );
+      setLoginUserResponseState({ ...loginUserResponseState, loading: true });
+      handleLoginUser(email, password, doNotLogout);
     }
 
     setValidated(true);

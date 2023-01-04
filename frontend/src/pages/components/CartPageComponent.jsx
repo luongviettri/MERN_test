@@ -3,20 +3,19 @@ import { Container, Row, Col, Alert, ListGroup, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import CartItemComponent from '../../components/CartItemComponent';
 export default function CartPageComponent({
-  addToCart,
+  addToCartAction,
   cartItems,
   cartSubtotal,
-  reduxDispatch,
-  removeFromCart,
+  dispatch,
+  removeFromCartAction,
 }) {
-  console.log(cartItems);
   const changeCount = (productID, count) => {
-    reduxDispatch(addToCart(productID, count));
+    dispatch(addToCartAction(productID, count));
   };
 
   const removeFromCartHandler = (productID, quantity, price) => {
     if (window.confirm('Are you sure?')) {
-      reduxDispatch(removeFromCart(productID, quantity, price));
+      dispatch(removeFromCartAction(productID, quantity, price));
     }
   };
 

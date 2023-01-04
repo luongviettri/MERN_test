@@ -1,17 +1,20 @@
 import CartPageComponent from './components/CartPageComponent';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToCart, removeFromCart } from '../redux/actions/cartActions';
+import {
+  addToCartAction,
+  removeFromCartAction,
+} from '../redux/actions/cartActions';
 const CartPage = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const cartSubtotal = useSelector((state) => state.cart.cartSubtotal);
-  const reduxDispatch = useDispatch();
+  const dispatch = useDispatch();
   return (
     <CartPageComponent
-      addToCart={addToCart}
-      removeFromCart={removeFromCart}
+      addToCartAction={addToCartAction}
+      removeFromCartAction={removeFromCartAction}
       cartItems={cartItems}
       cartSubtotal={cartSubtotal}
-      reduxDispatch={reduxDispatch}
+      dispatch={dispatch}
     />
   );
 };

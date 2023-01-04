@@ -3,11 +3,13 @@ import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';
+import { authenService } from '../../services/authenService';
+import catchAsync from '../../utils/catchAsync';
 
 export default function RegisterPageComponent({
   registerUserApiRequest,
-  reduxDispatch,
-  setReduxUserState,
+  dispatch,
+  loginAction,
 }) {
   const [validated, setValidated] = useState(false);
 
@@ -31,6 +33,25 @@ export default function RegisterPageComponent({
     }
   };
 
+  const registerHandler = catchAsync(
+    async (name, lastName, email, password) => {
+      const data = await registerUserApiRequest(
+        name,
+        lastName,
+        email,
+        password
+      );
+
+      //! cài loading = false
+      setRegisterUserResponseState({
+        success: data.success,
+        loading: false,
+      });
+      //! xử lý login
+      dispatch(loginAction(data.userCreated));
+    }
+  );
+
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -47,24 +68,7 @@ export default function RegisterPageComponent({
       lastName
     ) {
       setRegisterUserResponseState({ loading: true });
-
-      registerUserApiRequest(name, lastName, email, password)
-        .then((data) => {
-          //! cài loading = false
-          setRegisterUserResponseState({
-            success: data.success,
-            loading: false,
-          });
-          //! xử lý login
-          reduxDispatch(setReduxUserState(data.userCreated));
-        })
-        .catch((er) =>
-          setRegisterUserResponseState({
-            error: er.response.data.message
-              ? er.response.data.message
-              : er.response.data,
-          })
-        );
+      registerHandler(name, lastName, email, password);
     }
 
     setValidated(true);

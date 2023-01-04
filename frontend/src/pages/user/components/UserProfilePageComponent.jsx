@@ -68,10 +68,9 @@ export default function UserProfilePageComponent({
         password
       )
         .then((data) => {
-          console.log(data);
           setUpdateUserResponseState({ success: data.success, error: '' });
-          //! gửi lên state để đổi thành thông tin user mới nhất, và đổi luôn trong localStorage/sessionStorage
-          //2: riêng phần do not log out ko có khi server gửi về--> phải copy lại
+          // //! gửi lên state để đổi thành thông tin user mới nhất, và đổi luôn trong localStorage/sessionStorage
+          // //2: riêng phần do not log out ko có khi server gửi về--> phải copy lại
           reduxDispatch(
             setReduxUserState({
               doNotLogout: userInfo.doNotLogout,
@@ -112,7 +111,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 required
                 type="text"
-                defaultValue={user.name}
+                defaultValue={user?.name}
                 name="name"
               />
               <Form.Control.Feedback type="invalid">
@@ -124,7 +123,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 required
                 type="text"
-                defaultValue={user.lastName}
+                defaultValue={user?.lastName}
                 name="lastName"
               />
               <Form.Control.Feedback type="invalid">
@@ -136,7 +135,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 disabled
                 value={
-                  user.email +
+                  user?.email +
                   '   if you want to change email, remove account and create new one with new email address'
                 }
               />
@@ -146,7 +145,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 type="text"
                 placeholder="Enter your phone number"
-                defaultValue={user.phoneNumber}
+                defaultValue={user?.phoneNumber}
                 name="phoneNumber"
               />
             </Form.Group>
@@ -155,7 +154,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 type="text"
                 placeholder="Enter your street name and house number"
-                defaultValue={user.address}
+                defaultValue={user?.address}
                 name="address"
               />
             </Form.Group>
@@ -164,7 +163,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 type="text"
                 placeholder="Enter your country"
-                defaultValue={user.country}
+                defaultValue={user?.country}
                 name="country"
               />
             </Form.Group>
@@ -173,7 +172,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 type="text"
                 placeholder="Enter your Zip code"
-                defaultValue={user.zipCode}
+                defaultValue={user?.zipCode}
                 name="zipCode"
               />
             </Form.Group>
@@ -182,7 +181,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 type="text"
                 placeholder="Enter your city"
-                defaultValue={user.city}
+                defaultValue={user?.city}
                 name="city"
               />
             </Form.Group>
@@ -191,7 +190,7 @@ export default function UserProfilePageComponent({
               <Form.Control
                 type="text"
                 placeholder="Enter your state"
-                defaultValue={user.state}
+                defaultValue={user?.state}
                 name="state"
               />
             </Form.Group>

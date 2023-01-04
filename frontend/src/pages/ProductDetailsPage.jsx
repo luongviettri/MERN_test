@@ -1,19 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../redux/actions/cartActions';
+import { addToCartAction } from '../redux/actions/cartActions';
 import ProductDetailsPageComponent from './components/ProductDetailsPageComponent';
 import axios from 'axios';
-
-const getProductDetails = async (id) => {
-  const { data } = await axios.get(`/api/products/get-one/${id}`);
-  return data;
-};
-
-const writeReviewApiRequest = async (productId, formInputs) => {
-  const { data } = await axios.post(`/api/users/review/${productId}`, {
-    ...formInputs,
-  });
-  return data;
-};
+import { productService } from '../services/productService';
 
 const ProductDetailsPage = () => {
   const dispatch = useDispatch();
@@ -21,11 +10,9 @@ const ProductDetailsPage = () => {
 
   return (
     <ProductDetailsPageComponent
-      addToCartReduxAction={addToCart}
-      reduxDispatch={dispatch}
-      getProductDetails={getProductDetails}
+      addToCartAction={addToCartAction}
+      dispatch={dispatch}
       userInfo={userInfo}
-      writeReviewApiRequest={writeReviewApiRequest}
     />
   );
 };

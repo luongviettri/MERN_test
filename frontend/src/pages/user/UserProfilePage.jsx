@@ -1,7 +1,8 @@
 import UserProfilePageComponent from './components/UserProfilePageComponent';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setReduxUserState } from '../../redux/actions/userActions';
+import { loginAction } from '../../redux/actions/userActions';
+import { userService } from '../../services/userService';
 
 const updateUserApiRequest = async (
   name,
@@ -14,7 +15,7 @@ const updateUserApiRequest = async (
   state,
   password
 ) => {
-  const { data } = await axios.put('/api/users/profile', {
+  const { data } = await userService.updateUser(
     name,
     lastName,
     phoneNumber,
@@ -23,13 +24,13 @@ const updateUserApiRequest = async (
     zipCode,
     city,
     state,
-    password,
-  });
+    password
+  );
   return data;
 };
 
 const fetchUser = async (user_id) => {
-  const { data } = await axios.get('/api/users/profile/' + user_id);
+  const { data } = await userService.fetchUser(user_id);
   return data;
 };
 
@@ -43,7 +44,7 @@ const UserProfilePage = () => {
       updateUserApiRequest={updateUserApiRequest}
       fetchUser={fetchUser}
       userInfoFromRedux={userInfo}
-      setReduxUserState={setReduxUserState}
+      loginAction={loginAction}
       reduxDispatch={reduxDispatch}
       localStorage={window.localStorage}
       sessionStorage={window.sessionStorage}

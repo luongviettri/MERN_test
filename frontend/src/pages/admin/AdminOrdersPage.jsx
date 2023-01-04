@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { orderService } from '../../services/orderService';
 import OrdersPageComponent from './components/OrdersPageComponent';
 
 const getOrders = async () => {
-  const { data } = await axios.get('/api/orders/admin');
+  const { data } = await orderService.getAllOrdersAdmin();
   return data;
 };
 

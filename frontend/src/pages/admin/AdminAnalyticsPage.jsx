@@ -1,23 +1,20 @@
 import AnalyticsPageComponent from './components/AnalyticsPageComponent';
 import axios from 'axios';
 import socketIOClient from 'socket.io-client';
+import { orderService } from '../../services/orderService';
 
 const fetchOrdersForFirstDate = async (abctrl, firstDateToCompare) => {
-  const { data } = await axios.get(
-    '/api/orders/analysis/' + firstDateToCompare,
-    {
-      signal: abctrl.signal,
-    }
+  const { data } = await orderService.fetchOrdersForAnalysis(
+    abctrl,
+    firstDateToCompare
   );
   return data;
 };
 
 const fetchOrdersForSecondDate = async (abctrl, secondDateToCompare) => {
-  const { data } = await axios.get(
-    '/api/orders/analysis/' + secondDateToCompare,
-    {
-      signal: abctrl.signal,
-    }
+  const { data } = await orderService.fetchOrdersForAnalysis(
+    abctrl,
+    secondDateToCompare
   );
   return data;
 };

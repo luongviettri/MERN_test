@@ -17,8 +17,8 @@ export default function UserCartDetailsPageComponent({
   cartItems,
   itemsCount,
   cartSubtotal,
-  addToCart,
-  removeFromCart,
+  addToCartAction,
+  removeFromCartAction,
   reduxDispatch,
   userInfo,
   getUser,
@@ -31,12 +31,12 @@ export default function UserCartDetailsPageComponent({
   const navigate = useNavigate();
 
   const changeCount = (productID, count) => {
-    reduxDispatch(addToCart(productID, count));
+    reduxDispatch(addToCartAction(productID, count));
   };
 
   const removeFromCartHandler = (productID, quantity, price) => {
     if (window.confirm('Are you sure?')) {
-      reduxDispatch(removeFromCart(productID, quantity, price));
+      reduxDispatch(removeFromCartAction(productID, quantity, price));
     }
   };
   useEffect(() => {

@@ -1,7 +1,7 @@
 import * as actionTypes from '../constants/cartConstants';
 import axios from 'axios';
 
-export const addToCart =
+export const addToCartAction =
   (productId, quantity) => async (dispatch, getState) => {
     const { data } = await axios.get(`/api/products/get-one/${productId}`);
     dispatch({
@@ -20,7 +20,7 @@ export const addToCart =
     localStorage.setItem('cart', JSON.stringify(getState().cart.cartItems)); //! để truy cập được state từ redux thunk---> thêm getState param vào hàm
   };
 
-export const removeFromCart =
+export const removeFromCartAction =
   (productID, quantity, price) => (dispatch, getState) => {
     //! dispatch là sync function
     dispatch({

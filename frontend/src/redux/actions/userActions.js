@@ -2,8 +2,14 @@ import { LOGIN_USER, LOGOUT_USER } from '../constants/userConstants';
 import axios from 'axios';
 //! phần này nên đặt là authen, autho
 //2 set login
-export const setReduxUserState = (userCreated) => {
+export const loginAction = (userCreated) => {
   return (dispatch) => {
+
+
+
+
+
+    
     dispatch({
       type: LOGIN_USER,
       payload: userCreated,

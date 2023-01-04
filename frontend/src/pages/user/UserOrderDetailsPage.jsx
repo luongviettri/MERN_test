@@ -2,9 +2,11 @@ import UserOrderDetailsPageComponent from './components/UserOrderDetailsPageComp
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { loadScript } from '@paypal/paypal-js';
+import { userService } from '../../services/userService';
+import { orderService } from '../../services/orderService';
 
 const getOrder = async (orderId) => {
-  const { data } = await axios.get('/api/orders/user/' + orderId);
+  const { data } = await orderService.getOrderDetail(orderId);
   return data;
 };
 //! start: liên quan paypal
@@ -101,7 +103,7 @@ const onErrorHandler = function (err) {
 };
 
 const updateOrder = async (orderId) => {
-  const { data } = await axios.put('/api/orders/paid/' + orderId);
+  const { data } = await orderService.updateOrder(orderId);
   return data;
 };
 
@@ -111,9 +113,10 @@ const UserOrderDetailsPage = () => {
   const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
 
   const getUser = async () => {
-    const { data } = await axios.get('/api/users/profile/' + userInfo._id);
+    const { data } = await userService.getUser(userInfo._id);
     return data;
   };
+
   return (
     <UserOrderDetailsPageComponent
       userInfo={userInfo}

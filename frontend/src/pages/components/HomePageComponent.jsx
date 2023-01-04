@@ -4,24 +4,29 @@ import { Row, Container } from 'react-bootstrap';
 
 import { useEffect, useState } from 'react';
 import MetaComponent from '../../components/MetaComponent';
+import catchAsync from '../../utils/catchAsync';
+import { productService } from '../../services/productService';
 
-const HomePageComponent = ({ categories, getBestsellers }) => {
+const HomePageComponent = ({ categories }) => {
   const [mainCategories, setMainCategories] = useState([]);
   const [bestSellers, setBestsellers] = useState([]);
 
+  const handleGetBestSeller = catchAsync(async () => {
+    const { data } = await productService.getBestsellers();
+    setBestsellers(data);
+  });
+
+  const handleMainCategory = (category) => {
+    const MainCateogry = categories.filter((item) => {
+      const mainItem = !item.name.includes('/');
+      return mainItem;
+    });
+    setMainCategories(MainCateogry);
+  };
+
   useEffect(() => {
-    getBestsellers()
-      .then((data) => {
-        setBestsellers(data);
-      })
-      .catch((er) =>
-        console.log(
-          er.response.data.message ? er.response.data.message : er.response.data
-        )
-      );
-    setMainCategories((cat) =>
-      categories.filter((item) => !item.name.includes('/'))
-    );
+    handleGetBestSeller();
+    handleMainCategory();
   }, [categories]);
 
   return (

@@ -11,9 +11,11 @@ import {
   saveAttributeToCatDoc,
 } from '../../redux/actions/categoryActions';
 import { useDispatch } from 'react-redux';
+import { productService } from '../../services/productService';
 
 const createProductApiRequest = async (formInputs) => {
-  const { data } = await axios.post(`/api/products/admin`, { ...formInputs });
+  const { data } = await productService.createProduct(formInputs);
+
   return data;
 };
 

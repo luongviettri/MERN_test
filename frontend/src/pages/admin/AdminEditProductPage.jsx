@@ -7,16 +7,15 @@ import {
   uploadImagesApiRequest,
   uploadImagesCloudinaryApiRequest,
 } from './utils/utils';
+import { productService } from '../../services/productService';
 
 const fetchProduct = async (productId) => {
-  const { data } = await axios.get(`/api/products/get-one/${productId}`);
+  const { data } = await productService.fetchProduct(productId);
   return data;
 };
 
 const updateProductApiRequest = async (productId, formInputs) => {
-  const { data } = await axios.put(`/api/products/admin/${productId}`, {
-    ...formInputs,
-  });
+  const { data } = await productService.updateProduct(productId, formInputs);
   return data;
 };
 

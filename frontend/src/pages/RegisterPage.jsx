@@ -1,27 +1,31 @@
 import RegisterPageComponent from './components/RegisterPageComponent';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { setReduxUserState } from '../redux/actions/userActions';
-const registerUserApiRequest = async (name, lastName, email, password) => {
-  const { data } = await axios.post('/api/users/register', {
-    name,
-    lastName,
-    email,
-    password,
-  });
-  sessionStorage.setItem('userInfo', JSON.stringify(data.userCreated)); //! lưu lên session storage
-  if (data.success === 'User created') window.location.href = '/user';
-  return data;
-};
+import { loginAction } from '../redux/actions/userActions';
+import { authenService } from '../services/authenService';
+import catchAsync from '../utils/catchAsync';
+const registerUserApiRequest = catchAsync(
+  async (name, lastName, email, password) => {
+    const { data } = await authenService.register(
+      name,
+      lastName,
+      email,
+      password
+    );
+    sessionStorage.setItem('userInfo', JSON.stringify(data.userCreated)); //! lưu lên session storage
+    if (data.success === 'User created') window.location.href = '/user';
+    return data;
+  }
+);
 
 const RegisterPage = () => {
-  const reduxDispatch = useDispatch();
+  const dispatch = useDispatch();
 
   return (
     <RegisterPageComponent
       registerUserApiRequest={registerUserApiRequest}
-      reduxDispatch={reduxDispatch}
-      setReduxUserState={setReduxUserState}
+      dispatch={dispatch}
+      loginAction={loginAction}
     />
   );
 };

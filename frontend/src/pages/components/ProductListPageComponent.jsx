@@ -9,6 +9,7 @@ import AttributesFilterComponent from '../../components/filterQueryResultOptions
 
 import { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { productService } from '../../services/productService';
 
 const ProductListPageComponent = ({ getProducts, categories }) => {
   const [products, setProducts] = useState([]);
@@ -67,18 +68,33 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
   }, [categoriesFromFilter, categories]);
 
   useEffect(() => {
-    getProducts(categoryName, pageNumParam, searchQuery, filters, sortOption)
-      .then((products) => {
-        setProducts(products.products);
-        setPaginationLinksNumber(products.paginationLinksNumber);
-        setPageNum(products.pageNum);
-        setLoading(false);
-      })
-      .catch((er) => {
-        console.log(er);
-        setError(true);
-      });
+    handleGetProductsQuery(
+      categoryName,
+      pageNumParam,
+      searchQuery,
+      filters,
+      sortOption
+    );
   }, [categoryName, pageNumParam, searchQuery, filters, sortOption]);
+
+  const handleGetProductsQuery = async () => {
+    try {
+      const { data: products } = await productService.getProductsQuery(
+        categoryName,
+        pageNumParam,
+        searchQuery,
+        filters,
+        sortOption
+      );
+      setProducts(products.products);
+      setPaginationLinksNumber(products.paginationLinksNumber);
+      setPageNum(products.pageNum);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setError(true);
+    }
+  };
 
   const handleFilters = () => {
     navigate(location.pathname.replace(/\/[0-9]+$/, ''));

@@ -1,22 +1,27 @@
 import UserCartDetailsPageComponent from './components/UserCartDetailsPageComponent';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToCart, removeFromCart } from '../../redux/actions/cartActions';
+import {
+  addToCartAction,
+  removeFromCartAction,
+} from '../../redux/actions/cartActions';
 import axios from 'axios';
+import { userService } from '../../services/userService';
+import { orderService } from '../../services/orderService';
 
 const UserCartDetailsPage = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const itemsCount = useSelector((state) => state.cart.itemsCount);
   const cartSubtotal = useSelector((state) => state.cart.cartSubtotal);
   const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
-
   const reduxDispatch = useDispatch();
   const getUser = async () => {
-    const { data } = await axios.get('/api/users/profile/' + userInfo._id);
+    const { data } = await userService.getUser(userInfo._id);
+
     return data;
   };
 
   const createOrder = async (orderData) => {
-    const { data } = await axios.post('/api/orders', { ...orderData });
+    const { data } = await orderService.createOrder(orderData);
     return data;
   };
 
@@ -25,8 +30,8 @@ const UserCartDetailsPage = () => {
       cartItems={cartItems}
       itemsCount={itemsCount}
       cartSubtotal={cartSubtotal}
-      addToCart={addToCart}
-      removeFromCart={removeFromCart}
+      addToCartAction={addToCartAction}
+      removeFromCartAction={removeFromCartAction}
       reduxDispatch={reduxDispatch}
       userInfo={userInfo}
       getUser={getUser}
