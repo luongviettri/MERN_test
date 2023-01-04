@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';
 import { authenService } from '../../services/authenService';
 import catchAsync from '../../utils/catchAsync';
+import { trackPromise } from 'react-promise-tracker';
 
 export default function RegisterPageComponent({
   registerUserApiRequest,
@@ -35,11 +36,8 @@ export default function RegisterPageComponent({
 
   const registerHandler = catchAsync(
     async (name, lastName, email, password) => {
-      const data = await registerUserApiRequest(
-        name,
-        lastName,
-        email,
-        password
+      const data = await trackPromise(
+        registerUserApiRequest(name, lastName, email, password)
       );
 
       //! cài loading = false

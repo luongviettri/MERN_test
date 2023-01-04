@@ -4,9 +4,10 @@ import axios from 'axios';
 import { loadScript } from '@paypal/paypal-js';
 import { userService } from '../../services/userService';
 import { orderService } from '../../services/orderService';
+import { trackPromise } from 'react-promise-tracker';
 
 const getOrder = async (orderId) => {
-  const { data } = await orderService.getOrderDetail(orderId);
+  const { data } = await trackPromise(orderService.getOrderDetail(orderId));
   return data;
 };
 //! start: liên quan paypal
@@ -113,7 +114,7 @@ const UserOrderDetailsPage = () => {
   const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
 
   const getUser = async () => {
-    const { data } = await userService.getUser(userInfo._id);
+    const { data } = await trackPromise(userService.getUser(userInfo._id));
     return data;
   };
 

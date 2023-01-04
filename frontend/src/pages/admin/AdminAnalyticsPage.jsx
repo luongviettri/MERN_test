@@ -1,20 +1,17 @@
 import AnalyticsPageComponent from './components/AnalyticsPageComponent';
-import axios from 'axios';
 import socketIOClient from 'socket.io-client';
 import { orderService } from '../../services/orderService';
-
+import { trackPromise } from 'react-promise-tracker';
 const fetchOrdersForFirstDate = async (abctrl, firstDateToCompare) => {
-  const { data } = await orderService.fetchOrdersForAnalysis(
-    abctrl,
-    firstDateToCompare
+  const { data } = await trackPromise(
+    orderService.fetchOrdersForAnalysis(abctrl, firstDateToCompare)
   );
   return data;
 };
 
 const fetchOrdersForSecondDate = async (abctrl, secondDateToCompare) => {
-  const { data } = await orderService.fetchOrdersForAnalysis(
-    abctrl,
-    secondDateToCompare
+  const { data } = await trackPromise(
+    orderService.fetchOrdersForAnalysis(abctrl, secondDateToCompare)
   );
   return data;
 };

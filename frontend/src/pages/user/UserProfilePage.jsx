@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from '../../redux/actions/userActions';
 import { userService } from '../../services/userService';
+import { trackPromise } from 'react-promise-tracker';
 
 const updateUserApiRequest = async (
   name,
@@ -15,22 +16,24 @@ const updateUserApiRequest = async (
   state,
   password
 ) => {
-  const { data } = await userService.updateUser(
-    name,
-    lastName,
-    phoneNumber,
-    address,
-    country,
-    zipCode,
-    city,
-    state,
-    password
+  const { data } = await trackPromise(
+    userService.updateUser(
+      name,
+      lastName,
+      phoneNumber,
+      address,
+      country,
+      zipCode,
+      city,
+      state,
+      password
+    )
   );
   return data;
 };
 
 const fetchUser = async (user_id) => {
-  const { data } = await userService.fetchUser(user_id);
+  const { data } = await trackPromise(userService.fetchUser(user_id));
   return data;
 };
 

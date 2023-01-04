@@ -34,12 +34,14 @@ import AdminOrderDetailsPage from './pages/admin/AdminOrderDetailsPage';
 import AdminChatsPage from './pages/admin/AdminChatsPage';
 import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
 import ScrollToTop from './utils/ScrollToTop';
+import LoadingComponent from './components/Loading/LoadingComponent';
 
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <HeaderComponent />
+      <LoadingComponent />
       <Routes>
         <Route element={<RoutesWithUserChatComponent />}>
           {/* publicly available routes: */}

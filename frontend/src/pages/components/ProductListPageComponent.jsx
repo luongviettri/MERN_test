@@ -10,6 +10,7 @@ import AttributesFilterComponent from '../../components/filterQueryResultOptions
 import { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { productService } from '../../services/productService';
+import { trackPromise } from 'react-promise-tracker';
 
 const ProductListPageComponent = ({ getProducts, categories }) => {
   const [products, setProducts] = useState([]);
@@ -79,12 +80,14 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
 
   const handleGetProductsQuery = async () => {
     try {
-      const { data: products } = await productService.getProductsQuery(
-        categoryName,
-        pageNumParam,
-        searchQuery,
-        filters,
-        sortOption
+      const { data: products } = await trackPromise(
+        productService.getProductsQuery(
+          categoryName,
+          pageNumParam,
+          searchQuery,
+          filters,
+          sortOption
+        )
       );
       setProducts(products.products);
       setPaginationLinksNumber(products.paginationLinksNumber);

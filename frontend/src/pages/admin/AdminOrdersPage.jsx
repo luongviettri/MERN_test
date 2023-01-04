@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { orderService } from '../../services/orderService';
 import OrdersPageComponent from './components/OrdersPageComponent';
+import { trackPromise } from 'react-promise-tracker';
 
 const getOrders = async () => {
-  const { data } = await orderService.getAllOrdersAdmin();
+  const { data } = await trackPromise(orderService.getAllOrdersAdmin());
   return data;
 };
 

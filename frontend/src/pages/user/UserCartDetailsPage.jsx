@@ -7,6 +7,7 @@ import {
 import axios from 'axios';
 import { userService } from '../../services/userService';
 import { orderService } from '../../services/orderService';
+import { trackPromise } from 'react-promise-tracker';
 
 const UserCartDetailsPage = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -15,13 +16,13 @@ const UserCartDetailsPage = () => {
   const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
   const reduxDispatch = useDispatch();
   const getUser = async () => {
-    const { data } = await userService.getUser(userInfo._id);
+    const { data } = await trackPromise(userService.getUser(userInfo._id));
 
     return data;
   };
 
   const createOrder = async (orderData) => {
-    const { data } = await orderService.createOrder(orderData);
+    const { data } = await trackPromise(orderService.createOrder(orderData));
     return data;
   };
 

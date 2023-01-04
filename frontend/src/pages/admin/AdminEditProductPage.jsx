@@ -8,14 +8,17 @@ import {
   uploadImagesCloudinaryApiRequest,
 } from './utils/utils';
 import { productService } from '../../services/productService';
+import { trackPromise } from 'react-promise-tracker';
 
 const fetchProduct = async (productId) => {
-  const { data } = await productService.fetchProduct(productId);
+  const { data } = await trackPromise(productService.fetchProduct(productId));
   return data;
 };
 
 const updateProductApiRequest = async (productId, formInputs) => {
-  const { data } = await productService.updateProduct(productId, formInputs);
+  const { data } = await trackPromise(
+    productService.updateProduct(productId, formInputs)
+  );
   return data;
 };
 

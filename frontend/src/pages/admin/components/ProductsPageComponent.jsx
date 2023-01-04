@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import AdminLinksComponent from '../../../components/admin/AdminLinksComponent';
 import { logout } from '../../../redux/actions/userActions';
+import { trackPromise } from 'react-promise-tracker';
 
 export default function ProductsPageComponent({
   fetchProducts,
@@ -14,7 +15,7 @@ export default function ProductsPageComponent({
   const dispatch = useDispatch();
   const deleteHandler = async (productId) => {
     if (window.confirm('Are you sure?')) {
-      const data = await deleteProduct(productId);
+      const data = await trackPromise(deleteProduct(productId));
       if (data.message === 'product removed') {
         setProductDeleted(!productDeleted);
       }

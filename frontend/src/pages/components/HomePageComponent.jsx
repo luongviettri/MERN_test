@@ -6,13 +6,14 @@ import { useEffect, useState } from 'react';
 import MetaComponent from '../../components/MetaComponent';
 import catchAsync from '../../utils/catchAsync';
 import { productService } from '../../services/productService';
+import { trackPromise } from 'react-promise-tracker';
 
 const HomePageComponent = ({ categories }) => {
   const [mainCategories, setMainCategories] = useState([]);
   const [bestSellers, setBestsellers] = useState([]);
 
   const handleGetBestSeller = catchAsync(async () => {
-    const { data } = await productService.getBestsellers();
+    const { data } = await trackPromise(productService.getBestsellers());
     setBestsellers(data);
   });
 

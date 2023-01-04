@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import catchAsync from '../../utils/catchAsync';
 import { authenService } from '../../services/authenService';
 import { saveUserInformation } from '../../utils/authenUtils';
-// import Spinner from 'react-bootstrap/Spinner';
+import { trackPromise } from 'react-promise-tracker';
+
 export default function LoginPageComponent({ dispatch, loginAction }) {
   const [validated, setValidated] = useState(false);
   const [loginUserResponseState, setLoginUserResponseState] = useState({
@@ -16,7 +17,9 @@ export default function LoginPageComponent({ dispatch, loginAction }) {
 
   const handleLoginUser = catchAsync(async (email, password, doNotLogout) => {
     //! gửi thông tin lên backend yêu cầu login
-    const { data } = await authenService.login(email, password, doNotLogout);
+    const { data } = await trackPromise(
+      authenService.login(email, password, doNotLogout)
+    );
     //! lưu dữ liệu user lên browser
     saveUserInformation(data);
     //! set lại các giá trị loading và success

@@ -12,9 +12,10 @@ import {
 } from '../../redux/actions/categoryActions';
 import { useDispatch } from 'react-redux';
 import { productService } from '../../services/productService';
+import { trackPromise } from 'react-promise-tracker';
 
 const createProductApiRequest = async (formInputs) => {
-  const { data } = await productService.createProduct(formInputs);
+  const { data } = await trackPromise(productService.createProduct(formInputs));
 
   return data;
 };

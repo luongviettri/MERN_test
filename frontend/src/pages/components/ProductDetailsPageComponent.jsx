@@ -18,6 +18,7 @@ import MetaComponent from '../../components/MetaComponent';
 import { useParams } from 'react-router-dom';
 import catchAsync from '../../utils/catchAsync';
 import { productService } from '../../services/productService';
+import { trackPromise } from 'react-promise-tracker';
 
 const ProductDetailsPageComponent = ({
   addToCartAction,
@@ -66,13 +67,17 @@ const ProductDetailsPageComponent = ({
   });
 
   const handleGetProductDetail = catchAsync(async (id) => {
-    const { data: productDetail } = await productService.getProductDetail(id);
+    const { data: productDetail } = await trackPromise(
+      productService.getProductDetail(id)
+    );
     setProduct(productDetail);
     setLoading(false);
   });
 
   const handleWriteReview = catchAsync(async (productID, formInputs) => {
-    const { data } = await productService.writeReview(productID, formInputs);
+    const { data } = await trackPromise(
+      productService.writeReview(productID, formInputs)
+    );
     if (data === 'review created') {
       setProductReviewed('You successfuly reviewed the page!');
     }
