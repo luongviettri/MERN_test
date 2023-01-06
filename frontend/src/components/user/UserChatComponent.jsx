@@ -1,5 +1,5 @@
 import '../../chats.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 import { useSelector } from 'react-redux';
 
@@ -15,6 +15,8 @@ const UserChatComponent = () => {
   const [chatConnectionInfo, setChatConnectionInfo] = useState(false);
   const [reconnect, setReconnect] = useState(false);
 
+  const [visible, setVisible] = useState(true);
+  const controlVisible = useRef();
   const userInfo = useSelector(
     (state) => state.userRegisterLoginReducer.userInfo
   );
@@ -73,10 +75,25 @@ const UserChatComponent = () => {
     }, 200);
   };
 
+  const handleZindex = () => {
+    if (visible) {
+      controlVisible.current.style.zIndex = '99999';
+    } else {
+      controlVisible.current.style.zIndex = '-9999';
+    }
+    setVisible(!visible);
+  };
+
   return !userInfo.isAdmin ? (
     <>
       <input type="checkbox" id="check" />
-      <label className="chat-btn" htmlFor="check">
+      <label
+        onClick={() => {
+          handleZindex();
+        }}
+        className="chat-btn "
+        htmlFor="check"
+      >
         <i className="bi bi-chat-dots comment"></i>
         {messageReceived && (
           <span className="position-absolute top-0 start-10 translate-middle p-2 bg-danger border border-light rounded-circle"></span>
@@ -84,7 +101,8 @@ const UserChatComponent = () => {
 
         <i className="bi bi-x-circle close"></i>
       </label>
-      <div className="chat-wrapper">
+
+      <div className="chat-wrapper" ref={controlVisible}>
         <div className="chat-header ">
           <h6>Let's Chat - Online</h6>
         </div>

@@ -6,19 +6,18 @@ import PriceFilterComponent from '../../components/filterQueryResultOptions/Pric
 import RatingFilterComponent from '../../components/filterQueryResultOptions/RatingFilterComponent';
 import CategoryFilterComponent from '../../components/filterQueryResultOptions/CategoryFilterComponent';
 import AttributesFilterComponent from '../../components/filterQueryResultOptions/AttributesFilterComponent';
-
+import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { productService } from '../../services/productService';
 import { trackPromise } from 'react-promise-tracker';
 import catchAsync from '../../utils/catchAsync';
-
+import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 const ProductListPageComponent = ({ getProducts, categories }) => {
   const [products, setProducts] = useState([]);
   const [attrsFilter, setAttrsFilter] = useState([]); // collect category attributes from db and show on the webpage
   const [attrsFromFilter, setAttrsFromFilter] = useState([]); // collect user filters for category attributes
   const [showResetFiltersButton, setShowResetFiltersButton] = useState(false);
-
   const [filters, setFilters] = useState({}); // collect all filters
   const [price, setPrice] = useState(500);
   const [ratingsFromFilter, setRatingsFromFilter] = useState({});
@@ -32,11 +31,12 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
   const { searchQuery } = useParams() || '';
   const location = useLocation();
   const navigate = useNavigate();
-
+  const isBiggerThanMobile = useMediaQuery({ query: '(min-width: 576px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 575px)' });
   useEffect(() => {
     if (categoryName) {
       let categoryAllData = categories.find(
-        (item) => item.name === categoryName.replaceAll(',', '/')
+        (item) => item.name === categoryName.replace(/,/g, '/')
       );
       if (categoryAllData) {
         let mainCategory = categoryAllData.name.split('/')[0];
@@ -109,49 +109,60 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
     window.location.href = '/product-list';
   };
 
+  const renderSearchBarDesktopOrLaptop = () => {
+    return (
+      <Col md={3}>
+        <ListGroup variant="flush">
+          <ListGroup.Item className="mb-3 mt-3">
+            <SortOptionsComponent setSortOption={setSortOption} />
+          </ListGroup.Item>
+          <ListGroup.Item>
+            FILTER: <br />
+            <PriceFilterComponent price={price} setPrice={setPrice} />
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <RatingFilterComponent
+              setRatingsFromFilter={setRatingsFromFilter}
+            />
+          </ListGroup.Item>
+          {!location.pathname.match(/\/category/) && (
+            <ListGroup.Item>
+              <CategoryFilterComponent
+                setCategoriesFromFilter={setCategoriesFromFilter}
+              />
+            </ListGroup.Item>
+          )}
+          <ListGroup.Item>
+            <AttributesFilterComponent
+              attrsFilter={attrsFilter}
+              setAttrsFromFilter={setAttrsFromFilter}
+            />
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <Button variant="primary" onClick={handleFilters}>
+              Filter
+            </Button>{' '}
+            {showResetFiltersButton && (
+              <Button onClick={resetFilters} variant="danger">
+                Reset filters
+              </Button>
+            )}
+          </ListGroup.Item>
+        </ListGroup>
+      </Col>
+    );
+  };
+
+  const renderSearchBarMobileorTablet = () => {
+    return <div></div>;
+  };
+
   return (
     <Container fluid>
       <Row>
-        <Col md={3}>
-          <ListGroup variant="flush">
-            <ListGroup.Item className="mb-3 mt-3">
-              <SortOptionsComponent setSortOption={setSortOption} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-              FILTER: <br />
-              <PriceFilterComponent price={price} setPrice={setPrice} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-              <RatingFilterComponent
-                setRatingsFromFilter={setRatingsFromFilter}
-              />
-            </ListGroup.Item>
-            {!location.pathname.match(/\/category/) && (
-              <ListGroup.Item>
-                <CategoryFilterComponent
-                  setCategoriesFromFilter={setCategoriesFromFilter}
-                />
-              </ListGroup.Item>
-            )}
-            <ListGroup.Item>
-              <AttributesFilterComponent
-                attrsFilter={attrsFilter}
-                setAttrsFromFilter={setAttrsFromFilter}
-              />
-            </ListGroup.Item>
-            <ListGroup.Item>
-              <Button variant="primary" onClick={handleFilters}>
-                Filter
-              </Button>{' '}
-              {showResetFiltersButton && (
-                <Button onClick={resetFilters} variant="danger">
-                  Reset filters
-                </Button>
-              )}
-            </ListGroup.Item>
-          </ListGroup>
-        </Col>
-        <Col md={9}>
+        {isBiggerThanMobile && renderSearchBarDesktopOrLaptop()}
+        {isMobile && renderSearchBarMobileorTablet()}
+        <Col>
           {products.map((product) => (
             <ProductForListComponent
               key={product._id}

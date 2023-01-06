@@ -42,7 +42,7 @@
     position        : fixed;
     right           : 20px;
     bottom          : 100px;
-    z-index         : 2;
+    z-index         : -9999;
     width           : 300px;
     transition      : all .4s;
     background-color: #fff;

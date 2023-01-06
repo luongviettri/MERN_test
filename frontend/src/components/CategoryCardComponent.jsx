@@ -42,6 +42,8 @@ const CategoryCardComponent = ({ category, idx }) => {
           backgroundImage: `url(${category.image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          cursor: 'pointer',
+          // zIndex: '9999',
           // minHeight: '20rem',
         }}
       >
