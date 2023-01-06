@@ -34,7 +34,6 @@ const CreateProductPageComponent = ({
   const [isCreating, setIsCreating] = useState('');
   const [createProductResponseState, setCreateProductResponseState] = useState({
     message: '',
-    error: '',
   });
   const [categoryChoosen, setCategoryChoosen] = useState('Choose category');
 
@@ -86,11 +85,7 @@ const CreateProductPageComponent = ({
           if (data.message === 'product created') navigate('/admin/products');
         })
         .catch((er) => {
-          setCreateProductResponseState({
-            error: er.response.data.message
-              ? er.response.data.message
-              : er.response.data,
-          });
+          console.log('cài lại thành hàm async');
         });
     }
 
@@ -370,7 +365,6 @@ const CreateProductPageComponent = ({
             <Button variant="primary" type="submit">
               Create
             </Button>
-            {createProductResponseState.error ?? ''}
           </Form>
         </Col>
       </Row>

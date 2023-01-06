@@ -56,7 +56,6 @@ export default function EditProductPageComponent({
   const [product, setProduct] = useState({});
   const [updateProductResponseState, setUpdateProductResponseState] = useState({
     message: '',
-    error: '',
   });
   const [categoryChoosen, setCategoryChoosen] = useState('Choose category');
 
@@ -99,7 +98,7 @@ export default function EditProductPageComponent({
     setAttributesTable(product.attrs);
   }, [product]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     event.stopPropagation();
     const form = event.currentTarget.elements;
@@ -114,17 +113,12 @@ export default function EditProductPageComponent({
     };
 
     if (event.currentTarget.checkValidity() === true) {
-      updateProductApiRequest(id, formInputs)
-        .then((data) => {
-          if (data.message === 'product updated') navigate('/admin/products');
-        })
-        .catch((er) =>
-          setUpdateProductResponseState({
-            error: er.response.data.message
-              ? er.response.data.message
-              : er.response.data,
-          })
-        );
+      // updateProductApiRequest(id, formInputs).then((data) => {
+      //   if (data.message === 'product updated') navigate('/admin/products');
+      // });
+      const data = await updateProductApiRequest(id, formInputs);
+      console.log('data: ', data);
+      if (data.message === 'product updated') navigate('/admin/products');
     }
 
     setValidated(true);
@@ -443,7 +437,6 @@ export default function EditProductPageComponent({
             <Button variant="primary" type="submit">
               UPDATE
             </Button>
-            {updateProductResponseState.error ?? ''}
           </Form>
         </Col>
       </Row>

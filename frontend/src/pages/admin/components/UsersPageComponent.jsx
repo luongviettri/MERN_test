@@ -25,12 +25,6 @@ export default function UsersPageComponent({ fetchUsers, deleteUser }) {
       .then((res) => setUsers(res))
       .catch((error) => {
         dispatch(logout());
-
-        // console.log(
-        //   error.response.data.message
-        //     ? error.response.data.message
-        //     : error.response.data
-        // );
       }); //! tối ưu = redux thunk
     return () => abctrl.abort(); //! nghĩa là nếu đang gọi database mà component unmount thì dừng request luôn ( tránh memory leak )
   }, [userDeleted]);

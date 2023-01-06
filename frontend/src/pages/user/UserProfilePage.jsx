@@ -40,7 +40,7 @@ const fetchUser = async (user_id) => {
 const UserProfilePage = () => {
   const reduxDispatch = useDispatch();
 
-  const { userInfo } = useSelector((state) => state.userRegisterLogin);
+  const { userInfo } = useSelector((state) => state.userRegisterLoginReducer);
 
   return (
     <UserProfilePageComponent

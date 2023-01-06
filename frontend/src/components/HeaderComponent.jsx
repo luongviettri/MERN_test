@@ -27,10 +27,10 @@ import {
 
 const HeaderComponent = () => {
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.userRegisterLogin);
-  const itemsCount = useSelector((state) => state.cart.itemsCount);
-  const { categories } = useSelector((state) => state.getCategories);
-  const { messageReceived } = useSelector((state) => state.adminChat);
+  const { userInfo } = useSelector((state) => state.userRegisterLoginReducer);
+  const itemsCount = useSelector((state) => state.cartReducer.itemsCount);
+  const { categories } = useSelector((state) => state.getCategoriesReducer);
+  const { messageReceived } = useSelector((state) => state.adminChatReducer);
 
   const [searchCategoryToggle, setSearchCategoryToggle] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -93,10 +93,20 @@ const HeaderComponent = () => {
   }, [userInfo.isAdmin]);
 
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+    <Navbar
+      style={{ position: 'sticky', zIndex: '99', width: '100%', top: 0 }}
+      collapseOnSelect
+      expand="lg"
+      // bg="dark"
+      variant="dark"
+      className="header"
+    >
       <Container>
         <LinkContainer to="/">
-          <Navbar.Brand href="/">BEST ONLINE SHOP</Navbar.Brand>
+          <Navbar.Brand href="/">
+            {' '}
+            <b>VIET TRI SHOP</b>{' '}
+          </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">

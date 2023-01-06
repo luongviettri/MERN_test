@@ -1,9 +1,25 @@
+import { CART } from '../../utils/config';
 import * as actionTypes from '../constants/cartConstants';
+import { toast } from 'react-toastify';
+
+const cartItemsInLocalStorage = localStorage.getItem(CART)
+  ? JSON.parse(localStorage.getItem(CART))
+  : [];
 
 const CART_INITIAL_STATE = {
-  cartItems: [],
-  itemsCount: 0,
-  cartSubtotal: 0,
+  cartItems: cartItemsInLocalStorage,
+  itemsCount: cartItemsInLocalStorage
+    ? cartItemsInLocalStorage.reduce(
+        (quantity, item) => Number(item.quantity) + quantity,
+        0
+      )
+    : 0,
+  cartSubtotal: cartItemsInLocalStorage
+    ? cartItemsInLocalStorage.reduce(
+        (price, item) => price + item.price * item.quantity,
+        0
+      )
+    : 0,
 };
 
 export const cartReducer = (state = CART_INITIAL_STATE, action) => {
@@ -13,6 +29,10 @@ export const cartReducer = (state = CART_INITIAL_STATE, action) => {
       //! logic là nếu product đã có trong giỏ hàng thì đếm lại sản phẩm, và gán lại số lượng của product = số lượng mới ( nhưng số lượng tối đa là 3, ví dụ client mún chọn 10 sản phẩm thì sao ? )
 
       const productBeingAddedToCart = action.payload;
+      //! gửi thông báo
+      toast.success('Đã thêm sản phẩm vào giỏ hàng', {
+        position: toast.POSITION.TOP_RIGHT,
+      });
 
       const currentState = { ...state };
 

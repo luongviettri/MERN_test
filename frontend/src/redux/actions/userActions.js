@@ -4,12 +4,6 @@ import axios from 'axios';
 //2 set login
 export const loginAction = (userCreated) => {
   return (dispatch) => {
-
-
-
-
-
-    
     dispatch({
       type: LOGIN_USER,
       payload: userCreated,

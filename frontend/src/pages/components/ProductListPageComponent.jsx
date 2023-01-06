@@ -11,11 +11,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { productService } from '../../services/productService';
 import { trackPromise } from 'react-promise-tracker';
+import catchAsync from '../../utils/catchAsync';
 
 const ProductListPageComponent = ({ getProducts, categories }) => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [attrsFilter, setAttrsFilter] = useState([]); // collect category attributes from db and show on the webpage
   const [attrsFromFilter, setAttrsFromFilter] = useState([]); // collect user filters for category attributes
   const [showResetFiltersButton, setShowResetFiltersButton] = useState(false);
@@ -78,26 +77,20 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
     );
   }, [categoryName, pageNumParam, searchQuery, filters, sortOption]);
 
-  const handleGetProductsQuery = async () => {
-    try {
-      const { data: products } = await trackPromise(
-        productService.getProductsQuery(
-          categoryName,
-          pageNumParam,
-          searchQuery,
-          filters,
-          sortOption
-        )
-      );
-      setProducts(products.products);
-      setPaginationLinksNumber(products.paginationLinksNumber);
-      setPageNum(products.pageNum);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setError(true);
-    }
-  };
+  const handleGetProductsQuery = catchAsync(async () => {
+    const { data: products } = await trackPromise(
+      productService.getProductsQuery(
+        categoryName,
+        pageNumParam,
+        searchQuery,
+        filters,
+        sortOption
+      )
+    );
+    setProducts(products.products);
+    setPaginationLinksNumber(products.paginationLinksNumber);
+    setPageNum(products.pageNum);
+  });
 
   const handleFilters = () => {
     navigate(location.pathname.replace(/\/[0-9]+$/, ''));
@@ -159,24 +152,19 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
           </ListGroup>
         </Col>
         <Col md={9}>
-          {loading ? (
-            <h1>Loading products ....</h1>
-          ) : error ? (
-            <h1>Error while loading products. Try again later.</h1>
-          ) : (
-            products.map((product) => (
-              <ProductForListComponent
-                key={product._id}
-                images={product.images}
-                name={product.name}
-                description={product.description}
-                price={product.price}
-                rating={product.rating}
-                reviewsNumber={product.reviewsNumber}
-                productId={product._id}
-              />
-            ))
-          )}
+          {products.map((product) => (
+            <ProductForListComponent
+              key={product._id}
+              images={product.images}
+              name={product.name}
+              description={product.description}
+              price={product.price}
+              rating={product.rating}
+              reviewsNumber={product.reviewsNumber}
+              productId={product._id}
+            />
+          ))}
+
           {paginationLinksNumber > 1 ? (
             <PaginationComponent
               categoryName={categoryName}

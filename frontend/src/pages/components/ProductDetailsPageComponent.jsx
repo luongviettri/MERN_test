@@ -27,17 +27,15 @@ const ProductDetailsPageComponent = ({
 }) => {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const [showCartMessage, setShowCartMessage] = useState(false);
+  // const [showCartMessage, setShowCartMessage] = useState(false);
   const [product, setProduct] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [productReviewed, setProductReviewed] = useState(false);
 
   const messagesEndRef = useRef(null);
 
   const addToCartHandler = () => {
     dispatch(addToCartAction(id, quantity));
-    setShowCartMessage(true);
+    // setShowCartMessage(true);
   };
 
   useEffect(() => {
@@ -71,7 +69,6 @@ const ProductDetailsPageComponent = ({
       productService.getProductDetail(id)
     );
     setProduct(productDetail);
-    setLoading(false);
   });
 
   const handleWriteReview = catchAsync(async (productID, formInputs) => {
@@ -103,16 +100,8 @@ const ProductDetailsPageComponent = ({
     <>
       <MetaComponent title={product.name} description={product.description} />
       <Container>
-        <AddedToCartMessageComponent
-          showCartMessage={showCartMessage}
-          setShowCartMessage={setShowCartMessage}
-        />
         <Row className="mt-5">
-          {loading ? (
-            <h2>Loading product details ...</h2>
-          ) : error ? (
-            <h2>{error}</h2>
-          ) : (
+          {
             <>
               <Col style={{ zIndex: 1 }} md={4}>
                 {product.images
@@ -249,7 +238,7 @@ const ProductDetailsPageComponent = ({
                 </Form>
               </Col>
             </>
-          )}
+          }
         </Row>
       </Container>
     </>

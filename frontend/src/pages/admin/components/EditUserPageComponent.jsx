@@ -10,7 +10,6 @@ const EditUserPageComponent = ({ updateUserApiRequest, fetchUser }) => {
   const [isAdminState, setIsAdminState] = useState(false);
   const [updateUserResponseState, setUpdateUserResponseState] = useState({
     message: '',
-    error: '',
   });
 
   const { id } = useParams();
@@ -32,11 +31,7 @@ const EditUserPageComponent = ({ updateUserApiRequest, fetchUser }) => {
           }
         })
         .catch((er) => {
-          setUpdateUserResponseState({
-            error: er.response.data.message
-              ? er.response.data.message
-              : er.response.data,
-          });
+          console.log('cài lại thành async');
         });
     }
 
@@ -109,7 +104,6 @@ const EditUserPageComponent = ({ updateUserApiRequest, fetchUser }) => {
             <Button variant="primary" type="submit">
               UPDATE
             </Button>
-            {updateUserResponseState.error}
           </Form>
         </Col>
       </Row>

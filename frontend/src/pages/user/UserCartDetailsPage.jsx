@@ -10,10 +10,12 @@ import { orderService } from '../../services/orderService';
 import { trackPromise } from 'react-promise-tracker';
 
 const UserCartDetailsPage = () => {
-  const cartItems = useSelector((state) => state.cart.cartItems);
-  const itemsCount = useSelector((state) => state.cart.itemsCount);
-  const cartSubtotal = useSelector((state) => state.cart.cartSubtotal);
-  const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
+  const cartItems = useSelector((state) => state.cartReducer.cartItems);
+  const itemsCount = useSelector((state) => state.cartReducer.itemsCount);
+  const cartSubtotal = useSelector((state) => state.cartReducer.cartSubtotal);
+  const userInfo = useSelector(
+    (state) => state.userRegisterLoginReducer.userInfo
+  );
   const reduxDispatch = useDispatch();
   const getUser = async () => {
     const { data } = await trackPromise(userService.getUser(userInfo._id));

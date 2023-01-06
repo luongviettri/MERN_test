@@ -9,34 +9,28 @@ import {
 } from './utils/utils';
 import { productService } from '../../services/productService';
 import { trackPromise } from 'react-promise-tracker';
+import catchAsync from '../../utils/catchAsync';
 
 const fetchProduct = async (productId) => {
   const { data } = await trackPromise(productService.fetchProduct(productId));
   return data;
 };
 
-const updateProductApiRequest = async (productId, formInputs) => {
+const updateProductApiRequest = catchAsync(async (productId, formInputs) => {
   const { data } = await trackPromise(
     productService.updateProduct(productId, formInputs)
   );
   return data;
-};
+});
 
 const AdminEditProductPage = () => {
-  const { categories } = useSelector((state) => state.getCategories);
+  const { categories } = useSelector((state) => state.getCategoriesReducer);
 
   const reduxDispatch = useDispatch();
 
   const imageDeleteHandler = async (imagePath, productId) => {
-    let encoded = encodeURIComponent(imagePath);
-    if (process.env.NODE_ENV === 'production') {
-      //todo: tí nữa change to !==
-      await axios.delete(`/api/products/admin/image/${encoded}/${productId}`);
-    } else {
-      await axios.delete(
-        `/api/products/admin/image/${encoded}/${productId}?cloudinary=true`
-      );
-    }
+    let encodedImagePath = encodeURIComponent(imagePath);
+    trackPromise(productService.deleteImage(encodedImagePath, productId));
   };
 
   return (

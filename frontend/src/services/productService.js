@@ -52,6 +52,19 @@ class ProductService extends baseService {
     return this.delete(`api/products/admin/${productId}`);
   };
 
+  deleteImage = (encoded, productId) => {
+    console.log('OK');
+    let url = '';
+    if (process.env.NODE_ENV === 'production') {
+      //todo: tí nữa change to !==
+      url = `api/products/admin/image/${encoded}/${productId}`;
+    } else {
+      url = `api/products/admin/image/${encoded}/${productId}?cloudinary=true`;
+    }
+
+    return this.delete(url);
+  };
+
   //! nên tạo tính năng pagination và lấy từng phần để cho thực tế
   fetchAllProductsAdmin = (abortController) => {
     return this.get('api/products/admin', {

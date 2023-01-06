@@ -5,7 +5,7 @@ import { Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 
 const AdminChatsPage = () => {
-  const { chatRooms, socket } = useSelector((state) => state.adminChat);
+  const { chatRooms, socket } = useSelector((state) => state.adminChatReducer);
 
   return (
     <Row className="m-5">

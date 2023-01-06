@@ -18,7 +18,9 @@ const ProtectedRoutesComponent = ({ admin }) => {
     });
   }, [isAuth]);
 
-  if (isAuth === undefined) return <LoginPage />;
+  if (isAuth === undefined) {
+    return <LoginPage />;
+  }
 
   return isAuth && admin && isAuth !== 'admin' ? (
     <Navigate to="/login" />

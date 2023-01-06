@@ -35,11 +35,16 @@ import AdminChatsPage from './pages/admin/AdminChatsPage';
 import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
 import ScrollToTop from './utils/ScrollToTop';
 import LoadingComponent from './components/Loading/LoadingComponent';
-
+import { ErrorBoundary } from 'react-error-boundary';
+import React from 'react';
+import HandleErrorComponent from './components/HandleError/HandleErrorComponent';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <ToastContainer />
       <HeaderComponent />
       <LoadingComponent />
       <Routes>

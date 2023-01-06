@@ -13,7 +13,6 @@ export default function UserProfilePageComponent({
   const [validated, setValidated] = useState(false);
   const [updateUserResponseState, setUpdateUserResponseState] = useState({
     success: '',
-    error: '',
   });
   const [passwordsMatchState, setPasswordsMatchState] = useState(true);
   const [user, setUser] = useState({});
@@ -68,7 +67,7 @@ export default function UserProfilePageComponent({
         password
       )
         .then((data) => {
-          setUpdateUserResponseState({ success: data.success, error: '' });
+          setUpdateUserResponseState({ success: data.success });
           // //! gửi lên state để đổi thành thông tin user mới nhất, và đổi luôn trong localStorage/sessionStorage
           // //2: riêng phần do not log out ko có khi server gửi về--> phải copy lại
           reduxDispatch(
@@ -89,13 +88,9 @@ export default function UserProfilePageComponent({
             );
           }
         })
-        .catch((er) =>
-          setUpdateUserResponseState({
-            error: er.response.data.message
-              ? er.response.data.message
-              : er.response.data,
-          })
-        );
+        .catch((er) => {
+          console.log('cài lại thành async await');
+        });
     }
 
     setValidated(true);
@@ -231,14 +226,7 @@ export default function UserProfilePageComponent({
             <Button variant="primary" type="submit">
               Update
             </Button>
-            <Alert
-              show={
-                updateUserResponseState && updateUserResponseState.error !== ''
-              }
-              variant="danger"
-            >
-              Something went wrong
-            </Alert>
+
             <Alert
               show={
                 updateUserResponseState &&

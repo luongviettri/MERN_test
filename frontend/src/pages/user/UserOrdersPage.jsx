@@ -1,6 +1,5 @@
 import UserOrdersPageComponent from './components/UserOrdersPageComponent';
 
-import axios from 'axios';
 import { orderService } from '../../services/orderService';
 import { trackPromise } from 'react-promise-tracker';
 

@@ -50,18 +50,24 @@ export default function UserOrderDetailsPageComponent({
   useEffect(() => {
     getOrder(id)
       .then((data) => {
+        console.log('data: ', data);
         setPaymentMethod(data.paymentMethod);
         setCartItems(data.cartItems);
         setCartSubtotal(data.orderTotal.cartSubtotal);
         data.isDelivered
           ? setIsDelivered(data.deliveredAt)
           : setIsDelivered(false);
+
         data.isPaid ? setIsPaid(data.paidAt) : setIsPaid(false);
+
         if (data.isPaid) {
           setOrderButtonMessage('Your order is finished');
           setButtonDisabled(true);
         } else {
-          if (data.paymentMethod === 'pp') {
+          console.log('2');
+          if (data.paymentMethod === 'PayPal') {
+            console.log('data: ', data);
+            console.log('data.paymentMethod : ', data.paymentMethod);
             setOrderButtonMessage('Pay for your order');
           } else if (data.paymentMethod === 'cod') {
             setButtonDisabled(true);

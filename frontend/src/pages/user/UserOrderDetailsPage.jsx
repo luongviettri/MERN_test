@@ -18,20 +18,22 @@ const loadPayPalScript = (
   updateStateAfterOrder
 ) => {
   //! cài paypal, optimize: key đặt làm hằng số, value đưa vào biến môi trường
-  loadScript({
-    'client-id':
-      'Ad_wT0KUJQ6O-MXhAFkXYoaJMNzgNW75F2qMWZUBBxbnllt6AsKyqdD_leq_h_Z-XSI5m56pBxt1tUQy',
-  })
-    .then((paypal) => {
-      paypal
-        .Buttons(
-          buttons(cartSubtotal, cartItems, orderId, updateStateAfterOrder)
-        )
-        .render('#paypal-container-element');
+  trackPromise(
+    loadScript({
+      'client-id':
+        'Ad_wT0KUJQ6O-MXhAFkXYoaJMNzgNW75F2qMWZUBBxbnllt6AsKyqdD_leq_h_Z-XSI5m56pBxt1tUQy',
     })
-    .catch((err) => {
-      console.error('failed to load the PayPal JS SDK script', err);
-    });
+      .then((paypal) => {
+        paypal
+          .Buttons(
+            buttons(cartSubtotal, cartItems, orderId, updateStateAfterOrder)
+          )
+          .render('#paypal-container-element');
+      })
+      .catch((err) => {
+        console.error('failed to load the PayPal JS SDK script', err);
+      })
+  );
 };
 //! nên tách riêng hàm createOrder trong handler và onApprove trong handler để dễ maintain code, cũng như xử lí async await thay cho promise
 const buttons = (cartSubtotal, cartItems, orderId, updateStateAfterOrder) => {
@@ -111,7 +113,9 @@ const updateOrder = async (orderId) => {
 //! end: liên quan paypals
 
 const UserOrderDetailsPage = () => {
-  const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
+  const userInfo = useSelector(
+    (state) => state.userRegisterLoginReducer.userInfo
+  );
 
   const getUser = async () => {
     const { data } = await trackPromise(userService.getUser(userInfo._id));

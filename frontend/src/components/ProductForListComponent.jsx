@@ -12,7 +12,10 @@ const ProductForListComponent = ({
   reviewsNumber,
 }) => {
   return (
-    <Card style={{ marginTop: '30px', marginBottom: '50px' }}>
+    <Card
+      style={{ marginTop: '30px', marginBottom: '50px' }}
+      className="productListNeumorphirsm hover-shadow border-light"
+    >
       <Row>
         <Col lg={5}>
           <Card.Img

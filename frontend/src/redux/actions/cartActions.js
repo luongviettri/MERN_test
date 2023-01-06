@@ -17,7 +17,10 @@ export const addToCartAction =
     });
     //! để tránh mỗi lần refresh page bị mất giỏ hàng--->  cần phải lưu giỏ hàng vào local storage mỗi khi có hành động add product vào giỏ hàng
 
-    localStorage.setItem('cart', JSON.stringify(getState().cart.cartItems)); //! để truy cập được state từ redux thunk---> thêm getState param vào hàm
+    localStorage.setItem(
+      'cart',
+      JSON.stringify(getState().cartReducer.cartItems)
+    ); //! để truy cập được state từ redux thunk---> thêm getState param vào hàm
   };
 
 export const removeFromCartAction =

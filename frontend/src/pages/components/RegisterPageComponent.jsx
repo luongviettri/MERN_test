@@ -6,6 +6,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import { authenService } from '../../services/authenService';
 import catchAsync from '../../utils/catchAsync';
 import { trackPromise } from 'react-promise-tracker';
+import RegisterAnimation from '../../lotties/RegisterAnimation';
 
 export default function RegisterPageComponent({
   registerUserApiRequest,
@@ -16,8 +17,6 @@ export default function RegisterPageComponent({
 
   const [registerUserResponseState, setRegisterUserResponseState] = useState({
     success: '',
-    error: '',
-    loading: false,
   });
 
   const [passwordsMatchState, setPasswordsMatchState] = useState(true);
@@ -34,22 +33,15 @@ export default function RegisterPageComponent({
     }
   };
 
-  const registerHandler = catchAsync(
-    async (name, lastName, email, password) => {
-      const data = await trackPromise(
-        registerUserApiRequest(name, lastName, email, password)
-      );
+  const registerHandler = async (name, lastName, email, password) => {
+    const data = await registerUserApiRequest(name, lastName, email, password);
 
-      //! cài loading = false
-      setRegisterUserResponseState({
-        success: data.success,
-        loading: false,
-      });
-      //! xử lý login
-      dispatch(loginAction(data.userCreated));
-    }
-  );
-
+    setRegisterUserResponseState({
+      success: data.success,
+    });
+    //! xử lý login
+    dispatch(loginAction(data.userCreated));
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -65,7 +57,6 @@ export default function RegisterPageComponent({
       name &&
       lastName
     ) {
-      setRegisterUserResponseState({ loading: true });
       registerHandler(name, lastName, email, password);
     }
 
@@ -74,6 +65,9 @@ export default function RegisterPageComponent({
   return (
     <Container>
       <Row className="mt-5 justify-content-md-center">
+        <Col md={6}>
+          <RegisterAnimation />
+        </Col>
         <Col md={6}>
           <h1>Register</h1>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -154,30 +148,8 @@ export default function RegisterPageComponent({
               </Col>
             </Row>
 
-            <Button type="submit">
-              {/* {registerUserResponseState &&
-              registerUserResponseState.loading === true ? (
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-              ) : (
-                ''
-              )} */}
-              Submit
-            </Button>
-            <Alert
-              show={
-                registerUserResponseState &&
-                registerUserResponseState.error === 'user exists'
-              }
-              variant="danger"
-            >
-              User with that email already exists!
-            </Alert>
+            <Button type="submit">Submit</Button>
+
             <Alert
               show={
                 registerUserResponseState &&

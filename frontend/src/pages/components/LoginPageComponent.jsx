@@ -6,13 +6,12 @@ import catchAsync from '../../utils/catchAsync';
 import { authenService } from '../../services/authenService';
 import { saveUserInformation } from '../../utils/authenUtils';
 import { trackPromise } from 'react-promise-tracker';
+import LoginAnimation from '../../lotties/LoginAnimation';
 
 export default function LoginPageComponent({ dispatch, loginAction }) {
   const [validated, setValidated] = useState(false);
   const [loginUserResponseState, setLoginUserResponseState] = useState({
     success: '',
-    error: '',
-    loading: false,
   });
 
   const handleLoginUser = catchAsync(async (email, password, doNotLogout) => {
@@ -22,10 +21,9 @@ export default function LoginPageComponent({ dispatch, loginAction }) {
     );
     //! lưu dữ liệu user lên browser
     saveUserInformation(data);
-    //! set lại các giá trị loading và success
+    //! set lại các giá trị  và success
     setLoginUserResponseState({
       ...loginUserResponseState,
-      loading: false,
       success: data.success,
     });
     //! gửi thông tin lên redux để lưu lại dữ liệu sử dụng sau này
@@ -49,7 +47,6 @@ export default function LoginPageComponent({ dispatch, loginAction }) {
     const password = form.password.value;
     const doNotLogout = form.doNotLogout.checked;
     if (event.currentTarget.checkValidity() === true && email && password) {
-      setLoginUserResponseState({ ...loginUserResponseState, loading: true });
       handleLoginUser(email, password, doNotLogout);
     }
 
@@ -58,6 +55,9 @@ export default function LoginPageComponent({ dispatch, loginAction }) {
   return (
     <Container>
       <Row className="mt-5 justify-content-md-center">
+        <Col md={6}>
+          <LoginAnimation />
+        </Col>
         <Col md={6}>
           <h1>Login</h1>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -95,29 +95,8 @@ export default function LoginPageComponent({ dispatch, loginAction }) {
             </Row>
 
             <Button variant="primary" type="submit">
-              {/* {loginUserResponseState &&
-              loginUserResponseState.loading === true ? (
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-              ) : (
-                ''
-              )} */}
               Login
             </Button>
-            <Alert
-              show={
-                loginUserResponseState &&
-                loginUserResponseState.error === 'wrong credentials'
-              }
-              variant="danger"
-            >
-              Wrong credentials
-            </Alert>
           </Form>
         </Col>
       </Row>

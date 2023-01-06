@@ -1,6 +1,6 @@
 import { Carousel } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-
+import MediaQuery from 'react-responsive';
 const ProductCarouselComponent = ({ bestSellers }) => {
   const cursorP = {
     cursor: 'pointer',
@@ -19,9 +19,17 @@ const ProductCarouselComponent = ({ bestSellers }) => {
           />
           <Carousel.Caption>
             <LinkContainer style={cursorP} to={`/product-details/${item._id}`}>
-              <h3>Bestseller in {item.category} Category</h3>
+              <h3
+              // style={{
+              //   fontSize: '1000vw',
+              // }}
+              >
+                Bestseller in {item.category} Category
+              </h3>
             </LinkContainer>
-            <p>{item.description}</p>
+            <MediaQuery minWidth={720}>
+              <p>{item.description}</p>
+            </MediaQuery>
           </Carousel.Caption>
         </Carousel.Item>
       ))}

@@ -15,7 +15,9 @@ const UserChatComponent = () => {
   const [chatConnectionInfo, setChatConnectionInfo] = useState(false);
   const [reconnect, setReconnect] = useState(false);
 
-  const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
+  const userInfo = useSelector(
+    (state) => state.userRegisterLoginReducer.userInfo
+  );
 
   useEffect(() => {
     if (!userInfo.isAdmin) {
@@ -83,7 +85,7 @@ const UserChatComponent = () => {
         <i className="bi bi-x-circle close"></i>
       </label>
       <div className="chat-wrapper">
-        <div className="chat-header">
+        <div className="chat-header ">
           <h6>Let's Chat - Online</h6>
         </div>
         <div className="chat-form">
@@ -97,7 +99,7 @@ const UserChatComponent = () => {
                   </p>
                 )}
                 {item.admin && (
-                  <p className="bg-primary p-3 ms-4 text-light rounded-pill">
+                  <p className="bg-primary p-3 ms-4 text-light rounded-pill adminColorInUserPage">
                     <b>Support wrote:</b> {item.admin}
                   </p>
                 )}

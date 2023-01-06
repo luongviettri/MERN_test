@@ -6,7 +6,9 @@ import { productService } from '../services/productService';
 
 const ProductDetailsPage = () => {
   const dispatch = useDispatch();
-  const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
+  const userInfo = useSelector(
+    (state) => state.userRegisterLoginReducer.userInfo
+  );
 
   return (
     <ProductDetailsPageComponent

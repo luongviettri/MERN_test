@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useRef, useState } from 'react';
 
 const CategoryFilterComponent = ({ setCategoriesFromFilter }) => {
-  const { categories } = useSelector((state) => state.getCategories);
+  const { categories } = useSelector((state) => state.getCategoriesReducer);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const myRefs = useRef([]);
 
