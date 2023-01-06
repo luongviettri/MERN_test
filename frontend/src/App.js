@@ -45,6 +45,7 @@ import ComingSoonAnimation from './lotties/ComingSoonAnimation';
 function App() {
   const isBiggerThanMobile = useMediaQuery({ query: '(min-width: 576px)' });
   const isMobile = useMediaQuery({ query: '(max-width: 575px)' });
+  console.log('ok');
   return (
     <>
       {isBiggerThanMobile && (
