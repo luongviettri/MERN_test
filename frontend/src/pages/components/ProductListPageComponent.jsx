@@ -13,6 +13,7 @@ import { productService } from '../../services/productService';
 import { trackPromise } from 'react-promise-tracker';
 import catchAsync from '../../utils/catchAsync';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import EmptyListAnimation from '../../lotties/EmptyListAnimation';
 const ProductListPageComponent = ({ getProducts, categories }) => {
   const [products, setProducts] = useState([]);
   const [attrsFilter, setAttrsFilter] = useState([]); // collect category attributes from db and show on the webpage
@@ -157,24 +158,30 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
     return <div></div>;
   };
 
+  const renderEmptyList = () => {
+    return <EmptyListAnimation />;
+  };
+
   return (
     <Container fluid>
       <Row>
         {isBiggerThanMobile && renderSearchBarDesktopOrLaptop()}
         {isMobile && renderSearchBarMobileorTablet()}
         <Col>
-          {products.map((product) => (
-            <ProductForListComponent
-              key={product._id}
-              images={product.images}
-              name={product.name}
-              description={product.description}
-              price={product.price}
-              rating={product.rating}
-              reviewsNumber={product.reviewsNumber}
-              productId={product._id}
-            />
-          ))}
+          {products.length > 0
+            ? products.map((product) => (
+                <ProductForListComponent
+                  key={product._id}
+                  images={product.images}
+                  name={product.name}
+                  description={product.description}
+                  price={product.price}
+                  rating={product.rating}
+                  reviewsNumber={product.reviewsNumber}
+                  productId={product._id}
+                />
+              ))
+            : renderEmptyList()}
 
           {paginationLinksNumber > 1 ? (
             <PaginationComponent
