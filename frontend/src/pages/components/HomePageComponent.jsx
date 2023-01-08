@@ -35,8 +35,8 @@ const HomePageComponent = ({ categories }) => {
 
   const renderSkeleton = () => {
     const myArray = [1, 2, 3, 4];
-    return myArray.map(() => {
-      return <SkeletonProduct />;
+    return myArray.map((_, index) => {
+      return <SkeletonProduct key={`index ${index}`} />;
     });
   };
 

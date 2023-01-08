@@ -168,8 +168,8 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
 
   const renderSkeleton = () => {
     const myArray = [1, 2, 3, 4];
-    return myArray.map(() => {
-      return <SkeletonProductList />;
+    return myArray.map((_, index) => {
+      return <SkeletonProductList key={`index ${index}`} />;
     });
   };
 

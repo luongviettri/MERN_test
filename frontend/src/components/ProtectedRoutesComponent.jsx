@@ -9,7 +9,6 @@ const ProtectedRoutesComponent = ({ admin }) => {
 
   useEffect(() => {
     //! gọi API mỗi lần chuyển trang ?????????????????????????????????? tối ưu lại = lấy thông tin từ localStorage
-    console.log('vô đây liên tục');
     axios.get('/api/get-token').then(function (data) {
       if (data.data.token) {
         setIsAuth(data.data.token);
@@ -19,7 +18,7 @@ const ProtectedRoutesComponent = ({ admin }) => {
   }, [isAuth]);
 
   if (isAuth === undefined) {
-    return <LoginPage />;
+    return '';
   }
 
   return isAuth && admin && isAuth !== 'admin' ? (
