@@ -6,7 +6,7 @@ export default function LoadingComponent() {
   return (
     promiseInProgress && (
       <div className="loading-component-css">
-        <AnimationLoadingComponent />;
+        <AnimationLoadingComponent />
       </div>
     )
   );
