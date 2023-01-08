@@ -5,9 +5,10 @@
 } */
 
 #root {
-  padding-bottom  : 170px;
-  background-color: #F5F5FA;
-  overflow-x      : hidden;
+  padding-bottom     : 170px;
+  background-color   : #F5F5FA;
+  /* overflow-x      : hidden; */
+  contain            : paint;
 }
 
 html {
