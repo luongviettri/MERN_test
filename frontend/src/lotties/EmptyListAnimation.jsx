@@ -12,7 +12,7 @@ export default function EmptyListAnimation() {
   };
 
   return (
-    <div className="py-5">
+    <div className="py-5 flex justify-content-between align-content-center w-100 h-100">
       <h2 className="text-center">Rất tiếc, danh mục này chưa có sản phẩm</h2>
       <Lottie options={defaultOptions} height={400} width={400} />
     </div>

@@ -42,6 +42,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useMediaQuery } from 'react-responsive';
 import ComingSoonAnimation from './lotties/ComingSoonAnimation';
+import SkeletonElement from './assets/skeletons/SkeletonElement';
+import SkeletonArticle from './assets/skeletons/SkeletonArticle';
 function App() {
   const isBiggerThanMobile = useMediaQuery({ query: '(min-width: 576px)' });
   const isMobile = useMediaQuery({ query: '(max-width: 575px)' });

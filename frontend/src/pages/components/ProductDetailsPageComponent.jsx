@@ -19,6 +19,7 @@ import { useParams } from 'react-router-dom';
 import catchAsync from '../../utils/catchAsync';
 import { productService } from '../../services/productService';
 import { trackPromise } from 'react-promise-tracker';
+import SkeletonProductDetail from '../../assets/skeletons/SkeletonProductDetail';
 
 const ProductDetailsPageComponent = ({
   addToCartAction,
@@ -28,7 +29,7 @@ const ProductDetailsPageComponent = ({
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   // const [showCartMessage, setShowCartMessage] = useState(false);
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState({});
   const [productReviewed, setProductReviewed] = useState(false);
 
   const messagesEndRef = useRef(null);
@@ -96,12 +97,25 @@ const ProductDetailsPageComponent = ({
     }
   };
 
+  const renderSkeleton = () => {
+    return <SkeletonProductDetail />;
+  };
+  function isEmpty(obj) {
+    for (var prop in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+        return false;
+      }
+    }
+
+    return JSON.stringify(obj) === JSON.stringify({});
+  }
+  console.log(isEmpty(product));
   return (
     <>
       <MetaComponent title={product.name} description={product.description} />
       <Container>
         <Row className="mt-5">
-          {
+          {!isEmpty(product) && (
             <>
               <Col style={{ zIndex: 1 }} md={4}>
                 {product.images
@@ -238,7 +252,8 @@ const ProductDetailsPageComponent = ({
                 </Form>
               </Col>
             </>
-          }
+          )}
+          {isEmpty(product) && renderSkeleton()}
         </Row>
       </Container>
     </>

@@ -6,12 +6,15 @@ import { useEffect, useState } from 'react';
 import MetaComponent from '../../components/MetaComponent';
 import catchAsync from '../../utils/catchAsync';
 import { productService } from '../../services/productService';
-import { trackPromise } from 'react-promise-tracker';
+import { trackPromise, usePromiseTracker } from 'react-promise-tracker';
+
+import SkeletonProduct from '../../assets/skeletons/SkeletonProduct';
+import EmptyListAnimation from '../../lotties/EmptyListAnimation';
 
 const HomePageComponent = ({ categories }) => {
   const [mainCategories, setMainCategories] = useState([]);
   const [bestSellers, setBestsellers] = useState([]);
-
+  const { promiseInProgress } = usePromiseTracker();
   const handleGetBestSeller = catchAsync(async () => {
     const { data } = await trackPromise(productService.getBestsellers());
     setBestsellers(data);
@@ -30,15 +33,34 @@ const HomePageComponent = ({ categories }) => {
     handleMainCategory();
   }, [categories]);
 
+  const renderSkeleton = () => {
+    const myArray = [1, 2, 3, 4];
+    return myArray.map(() => {
+      return <SkeletonProduct />;
+    });
+  };
+
+  const renderEmptyList = () => {
+    return <EmptyListAnimation />;
+  };
+
   return (
     <>
       <MetaComponent />
       <ProductCarouselComponent bestSellers={bestSellers} />
       <Container>
         <Row xs={1} md={2} className="g-4 mt-5 ">
-          {mainCategories.map((category, idx) => (
-            <CategoryCardComponent key={idx} category={category} idx={idx} />
-          ))}
+          {mainCategories.length > 0
+            ? mainCategories.map((category, idx) => (
+                <CategoryCardComponent
+                  key={idx}
+                  category={category}
+                  idx={idx}
+                />
+              ))
+            : promiseInProgress
+            ? renderSkeleton()
+            : renderEmptyList()}
         </Row>
       </Container>
     </>

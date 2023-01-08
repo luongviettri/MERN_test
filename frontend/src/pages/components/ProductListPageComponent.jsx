@@ -10,10 +10,14 @@ import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { productService } from '../../services/productService';
-import { trackPromise } from 'react-promise-tracker';
+import { trackPromise, usePromiseTracker } from 'react-promise-tracker';
+
 import catchAsync from '../../utils/catchAsync';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import EmptyListAnimation from '../../lotties/EmptyListAnimation';
+import SkeletonProduct from '../../assets/skeletons/SkeletonProduct';
+import SkeletonProductDetail from '../../assets/skeletons/SkeletonProductList';
+import SkeletonProductList from '../../assets/skeletons/SkeletonProductList';
 const ProductListPageComponent = ({ getProducts, categories }) => {
   const [products, setProducts] = useState([]);
   const [attrsFilter, setAttrsFilter] = useState([]); // collect category attributes from db and show on the webpage
@@ -26,7 +30,7 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
   const [sortOption, setSortOption] = useState('');
   const [paginationLinksNumber, setPaginationLinksNumber] = useState(null);
   const [pageNum, setPageNum] = useState(null);
-
+  const { promiseInProgress } = usePromiseTracker();
   const { categoryName } = useParams() || '';
   const { pageNumParam } = useParams() || 1;
   const { searchQuery } = useParams() || '';
@@ -162,6 +166,13 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
     return <EmptyListAnimation />;
   };
 
+  const renderSkeleton = () => {
+    const myArray = [1, 2, 3, 4];
+    return myArray.map(() => {
+      return <SkeletonProductList />;
+    });
+  };
+
   return (
     <Container fluid>
       <Row>
@@ -181,6 +192,8 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
                   productId={product._id}
                 />
               ))
+            : promiseInProgress
+            ? renderSkeleton()
             : renderEmptyList()}
 
           {paginationLinksNumber > 1 ? (
