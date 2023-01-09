@@ -47,7 +47,6 @@ import SkeletonArticle from './assets/skeletons/SkeletonArticle';
 function App() {
   const isBiggerThanMobile = useMediaQuery({ query: '(min-width: 576px)' });
   const isMobile = useMediaQuery({ query: '(max-width: 575px)' });
-  console.log('ok');
   return (
     <>
       {isBiggerThanMobile && (

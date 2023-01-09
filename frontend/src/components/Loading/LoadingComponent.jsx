@@ -5,7 +5,7 @@ export default function LoadingComponent() {
   const { promiseInProgress } = usePromiseTracker();
   return (
     promiseInProgress && (
-      <div className="loading-component-css">
+      <div className="loading-wrapper">
         <AnimationLoadingComponent />
       </div>
     )
