@@ -8,17 +8,21 @@ const ProtectedRoutesComponent = ({ admin }) => {
   const [isAuth, setIsAuth] = useState();
 
   useEffect(() => {
-    //! gọi API mỗi lần chuyển trang ?????????????????????????????????? tối ưu lại = lấy thông tin từ localStorage
-    axios.get('/api/get-token').then(function (data) {
-      if (data.data.token) {
-        setIsAuth(data.data.token);
-      }
-      return isAuth;
-    });
+    axios
+      .get('/api/get-token')
+      .then(function (data) {
+        if (data.data.token) {
+          setIsAuth(data.data.token);
+        }
+        return isAuth;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [isAuth]);
 
   if (isAuth === undefined) {
-    return '';
+    return <LoginPage />;
   }
 
   return isAuth && admin && isAuth !== 'admin' ? (

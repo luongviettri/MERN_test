@@ -9,6 +9,7 @@
   background-color   : #F5F5FA;
   /* overflow-x      : hidden; */
   contain            : paint;
+  min-height         : 100vh;
 }
 
 html {
@@ -22,6 +23,7 @@ html {
 } */
 
 footer {
+
   background-color: #F5F5FA;
 
   position: absolute;
