@@ -30,6 +30,7 @@ const HeaderComponent = () => {
   const { userInfo } = useSelector((state) => state.userRegisterLoginReducer);
   const itemsCount = useSelector((state) => state.cartReducer.itemsCount);
   const { categories } = useSelector((state) => state.getCategoriesReducer);
+  console.log('categories: ', categories);
   const { messageReceived } = useSelector((state) => state.adminChatReducer);
 
   const [searchCategoryToggle, setSearchCategoryToggle] = useState('All');
@@ -92,107 +93,109 @@ const HeaderComponent = () => {
     }
   }, [userInfo.isAdmin]);
 
-  return (
-    <Navbar
-      style={{ position: 'sticky', zIndex: '99', width: '100%', top: 0 }}
-      collapseOnSelect
-      expand="lg"
-      // bg="dark"
-      variant="dark"
-      className="header"
-    >
-      <Container>
-        <LinkContainer to="/">
-          <Navbar.Brand href="/">
-            {' '}
-            <b>VIET TRI SHOP</b>{' '}
-          </Navbar.Brand>
-        </LinkContainer>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto">
-            <InputGroup>
-              <DropdownButton
-                id="dropdown-basic-button"
-                title={searchCategoryToggle}
-              >
-                <Dropdown.Item onClick={() => setSearchCategoryToggle('All')}>
-                  All
-                </Dropdown.Item>
-                {categories.map((category, id) => (
-                  <Dropdown.Item
-                    key={id}
-                    onClick={() => setSearchCategoryToggle(category.name)}
-                  >
-                    {category.name}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
-              <Form.Control
-                onKeyUp={submitHandler}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                type="text"
-                placeholder="Search in shop ..."
-              />
-              <Button onClick={submitHandler} variant="warning">
-                <i className="bi bi-search text-dark"></i>
-              </Button>
-            </InputGroup>
-          </Nav>
-          <Nav>
-            {userInfo.isAdmin ? (
-              <LinkContainer to="/admin/orders">
-                <Nav.Link>
-                  Admin
-                  {messageReceived && (
-                    <span className="position-absolute top-1 start-10 translate-middle p-2 bg-danger border border-light rounded-circle"></span>
-                  )}
-                </Nav.Link>
-              </LinkContainer>
-            ) : userInfo.name && !userInfo.isAdmin ? (
-              <NavDropdown
-                title={`${userInfo.name} ${userInfo.lastName}`}
-                id="collasible-nav-dropdown"
-              >
-                <NavDropdown.Item
-                  eventKey="/user/my-orders"
-                  as={Link}
-                  to="/user/my-orders"
-                >
-                  My orders
-                </NavDropdown.Item>
-                <NavDropdown.Item eventKey="/user" as={Link} to="/user">
-                  My profile
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => dispatch(logout())}>
-                  Logout
-                </NavDropdown.Item>
-              </NavDropdown>
-            ) : (
-              <>
-                <LinkContainer to="/login">
-                  <Nav.Link>Login</Nav.Link>
-                </LinkContainer>
-                <LinkContainer to="/register">
-                  <Nav.Link>Register</Nav.Link>
-                </LinkContainer>
-              </>
-            )}
+  // return (
+  //   <Navbar
+  //     style={{ position: 'sticky', zIndex: '99', width: '100%', top: 0 }}
+  //     collapseOnSelect
+  //     expand="lg"
+  //     // bg="dark"
+  //     variant="dark"
+  //     className="header"
+  //   >
+  //     <Container>
+  //       <LinkContainer to="/">
+  //         <Navbar.Brand href="/">
+  //           {' '}
+  //           <b>VIET TRI SHOP</b>{' '}
+  //         </Navbar.Brand>
+  //       </LinkContainer>
+  //       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+  //       <Navbar.Collapse id="responsive-navbar-nav">
+  //         <Nav className="me-auto">
+  //           <InputGroup>
+  //             <DropdownButton
+  //               id="dropdown-basic-button"
+  //               title={searchCategoryToggle}
+  //             >
+  //               <Dropdown.Item onClick={() => setSearchCategoryToggle('All')}>
+  //                 All
+  //               </Dropdown.Item>
+  //               {categories.map((category, id) => (
+  //                 <Dropdown.Item
+  //                   key={id}
+  //                   onClick={() => setSearchCategoryToggle(category.name)}
+  //                 >
+  //                   {category.name}
+  //                 </Dropdown.Item>
+  //               ))}
+  //             </DropdownButton>
+  //             <Form.Control
+  //               onKeyUp={submitHandler}
+  //               onChange={(e) => setSearchQuery(e.target.value)}
+  //               type="text"
+  //               placeholder="Search in shop ..."
+  //             />
+  //             <Button onClick={submitHandler} variant="warning">
+  //               <i className="bi bi-search text-dark"></i>
+  //             </Button>
+  //           </InputGroup>
+  //         </Nav>
+  //         <Nav>
+  //           {userInfo.isAdmin ? (
+  //             <LinkContainer to="/admin/orders">
+  //               <Nav.Link>
+  //                 Admin
+  //                 {messageReceived && (
+  //                   <span className="position-absolute top-1 start-10 translate-middle p-2 bg-danger border border-light rounded-circle"></span>
+  //                 )}
+  //               </Nav.Link>
+  //             </LinkContainer>
+  //           ) : userInfo.name && !userInfo.isAdmin ? (
+  //             <NavDropdown
+  //               title={`${userInfo.name} ${userInfo.lastName}`}
+  //               id="collasible-nav-dropdown"
+  //             >
+  //               <NavDropdown.Item
+  //                 eventKey="/user/my-orders"
+  //                 as={Link}
+  //                 to="/user/my-orders"
+  //               >
+  //                 My orders
+  //               </NavDropdown.Item>
+  //               <NavDropdown.Item eventKey="/user" as={Link} to="/user">
+  //                 My profile
+  //               </NavDropdown.Item>
+  //               <NavDropdown.Item onClick={() => dispatch(logout())}>
+  //                 Logout
+  //               </NavDropdown.Item>
+  //             </NavDropdown>
+  //           ) : (
+  //             <>
+  //               <LinkContainer to="/login">
+  //                 <Nav.Link>Login</Nav.Link>
+  //               </LinkContainer>
+  //               <LinkContainer to="/register">
+  //                 <Nav.Link>Register</Nav.Link>
+  //               </LinkContainer>
+  //             </>
+  //           )}
 
-            <LinkContainer to="/cart">
-              <Nav.Link>
-                <Badge pill bg="danger">
-                  {itemsCount === 0 ? '' : itemsCount}
-                </Badge>
-                <i className="bi bi-cart-dash"></i>
-                <span className="ms-1">CART</span>
-              </Nav.Link>
-            </LinkContainer>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  );
+  //           <LinkContainer to="/cart">
+  //             <Nav.Link>
+  //               <Badge pill bg="danger">
+  //                 {itemsCount === 0 ? '' : itemsCount}
+  //               </Badge>
+  //               <i className="bi bi-cart-dash"></i>
+  //               <span className="ms-1">CART</span>
+  //             </Nav.Link>
+  //           </LinkContainer>
+  //         </Nav>
+  //       </Navbar.Collapse>
+  //     </Container>
+  //   </Navbar>
+  // );
+
+  return <div></div>;
 };
 
 export default HeaderComponent;
