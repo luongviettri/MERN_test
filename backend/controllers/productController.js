@@ -46,6 +46,7 @@ const getProducts = async (req, res, next) => {
       categoryQueryCondition = {
         category: { $in: arrayQuery },
       };
+      console.log('categoryQueryCondition: ', categoryQueryCondition);
     }
     //todo----------------------------------------------------------------------------------------
 
@@ -85,6 +86,7 @@ const getProducts = async (req, res, next) => {
     if (req.query.attrs) {
       // attrs=RAM-1TB-2TB-4TB,color-blue-red
       // [ 'RAM-1TB-4TB', 'color-blue', '' ]
+      console.log('req.query.attrs: ', req.query.attrs);
       attrsQueryCondition = req.query.attrs.split(',').reduce((acc, item) => {
         if (item) {
           const a = item.split('-');
@@ -94,11 +96,13 @@ const getProducts = async (req, res, next) => {
             attrs: { $elemMatch: { key: a[0], value: { $in: values } } },
           };
           acc.push(a1);
-          // console.dir(acc, { depth: null })
+          // console.dir(acc, { depth: null });
           return acc;
         }
         return acc;
       }, []);
+      console.dir(attrsQueryCondition, { depth: null });
+      // console.log('attrsQueryCondition: ', attrsQueryCondition);
       queryCondition = true;
     }
 
@@ -117,11 +121,14 @@ const getProducts = async (req, res, next) => {
       const sortOpt = sortOption.split('_');
       const [sortKey, sortValue] = sortOpt; //todo: destructoring array
       sort = { [sortKey]: Number(sortValue) }; //todo: key động và convert Number
+      console.log('sort: ', sort);
     }
+
     //todo: searchQuery
     const searchQuery = req.params.searchQuery || '';
     let searchQueryCondition = {};
     let select = {}; //! dùng để exclude hoặc include fields muốn hiển thị ra, Trường hợp này là include field score để đo mức độ match results
+
     if (searchQuery) {
       queryCondition = true;
       searchQueryCondition = { $text: { $search: searchQuery } };

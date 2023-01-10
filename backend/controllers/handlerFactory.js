@@ -64,21 +64,41 @@ exports.getOne = (Model, popOptions) =>
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    console.log('read to test');
-    //! to allow for nested GET reviews on tour (hack)
+    //! to allow for nested GET reviews on product (hack)
     let filter = {};
 
-    if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.params.productID) filter = { product: req.params.tourId };
 
-    console.log('req.query: ', req.query);
     //! EXECUTE QUERY
     const features = new APIFeatures(Model.find(filter), req.query)
-      // .filter()
-      .price();
-    // .limitFields()
-    // .paginate();
+      .filter()
+      .limitFields()
+      .paginate()
+      .sort();
+
+    //! params (RẤT cần tách ra url riêng )
+
+    if (req.params.searchQuery) {
+      filter = { ...filter, score: { $meta: 'textScore' } };
+      const select = {
+        score: { $meta: 'textScore' },
+      };
+      Model.select(select);
+      const sort = { score: { $meta: 'textScore' } };
+      Model.sort(sort);
+    }
+
+    if (req.params.categoryName) {
+      const { categoryName } = req.params;
+
+      const condition = categoryName.replace(/,/g, '/');
+      const regEx = new RegExp(`^${condition}`);
+      Model.find({ category: regEx });
+    }
+
     // const doc = await features.query.explain();
     const doc = await features.query;
+    // console.log('doc: ', doc);
     //! SEND RESPONSE
     res.status(200).json({
       status: 'success',

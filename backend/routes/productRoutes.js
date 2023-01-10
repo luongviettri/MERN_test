@@ -19,10 +19,11 @@ const {
   getProductsRefactor,
 } = require('../controllers/productController');
 
-router.get('/category/:categoryName/search/:searchQuery', getProducts);
-router.get('/category/:categoryName', getProducts);
-router.get('/search/:searchQuery', getProducts);
-router.get('/', getProducts);
+router.get('/category/:categoryName/search/:searchQuery', getProducts); //! refactor ham rieng
+router.get('/category/:categoryName', getProducts); //! refactor ham rieng
+router.get('/search/:searchQuery', getProducts); //! refactor ham rieng
+// router.get('/', getProducts); //! đã refactor nhưng cần tiếp tục tách phần param
+router.get('/', getProductsRefactor);
 
 router.get('/testRefactor', getProductsRefactor);
 
