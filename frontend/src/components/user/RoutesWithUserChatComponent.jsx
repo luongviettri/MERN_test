@@ -1,6 +1,6 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import UserChatComponent from "./UserChatComponent";
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import UserChatComponent from './UserChatComponent';
 
 const RoutesWithUserChatComponent = () => {
   return (

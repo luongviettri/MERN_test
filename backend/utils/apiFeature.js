@@ -3,6 +3,7 @@ class APIFeatures {
     this.query = query;
     this.queryString = queryString;
   }
+  //! price-- rating -- category--atts--sort
 
   filter() {
     //todo:1A) Filtering
@@ -11,6 +12,7 @@ class APIFeatures {
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]); //! xóa trường nào có trong mảng này
 
+    console.log('queryObj: ', queryObj);
     //todo:1B) Advanced filtering (<, >,<=, >= )
 
     let queryStr = JSON.stringify(queryObj);
@@ -18,6 +20,20 @@ class APIFeatures {
 
     this.query = this.query.find(JSON.parse(queryStr));
     return this;
+  }
+
+  price() {
+    console.log('vo price');
+    // if (req.query.price) {
+    //   queryCondition = true;
+    //   priceQueryCondition = { price: { $lte: Number(req.query.price) } }; //! tên property và điều kiện ( operator: chỉ định hành động )
+    // }
+
+    if (this.queryString.price) {
+      const priceCondition = this.queryString;
+      console.log('priceCondition: ', priceCondition);
+      this.query = this.query.find(priceCondition);
+    }
   }
 
   sort() {

@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const recordsPerPage = require('../config/pagination');
 const Product = require('../models/ProductModel');
 const imageValidate = require('../utils/imageValidate');
+const factory = require('./handlerFactory');
 
 const getProducts = async (req, res, next) => {
   try {
@@ -15,6 +16,7 @@ const getProducts = async (req, res, next) => {
     let categoryQueryCondition = {};
 
     if (req.query.price) {
+      console.log('req.query: ', req.query);
       queryCondition = true;
       priceQueryCondition = { price: { $lte: Number(req.query.price) } }; //! tên property và điều kiện ( operator: chỉ định hành động )
     }
@@ -162,6 +164,8 @@ const getProducts = async (req, res, next) => {
     next(error);
   }
 };
+
+const getProductsRefactor = factory.getAll(Product);
 
 const getProductById = async (req, res, next) => {
   try {
@@ -400,4 +404,5 @@ module.exports = {
   adminUpdateProduct,
   adminUpload,
   adminDeleteProductImage,
+  getProductsRefactor,
 };

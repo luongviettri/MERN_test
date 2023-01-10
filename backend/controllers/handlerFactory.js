@@ -64,17 +64,19 @@ exports.getOne = (Model, popOptions) =>
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
+    console.log('read to test');
     //! to allow for nested GET reviews on tour (hack)
     let filter = {};
 
     if (req.params.tourId) filter = { tour: req.params.tourId };
 
+    console.log('req.query: ', req.query);
     //! EXECUTE QUERY
     const features = new APIFeatures(Model.find(filter), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
+      // .filter()
+      .price();
+    // .limitFields()
+    // .paginate();
     // const doc = await features.query.explain();
     const doc = await features.query;
     //! SEND RESPONSE

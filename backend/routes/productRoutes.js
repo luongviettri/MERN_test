@@ -16,12 +16,16 @@ const {
   adminUpdateProduct,
   adminUpload,
   adminDeleteProductImage,
+  getProductsRefactor,
 } = require('../controllers/productController');
 
 router.get('/category/:categoryName/search/:searchQuery', getProducts);
 router.get('/category/:categoryName', getProducts);
 router.get('/search/:searchQuery', getProducts);
 router.get('/', getProducts);
+
+router.get('/testRefactor', getProductsRefactor);
+
 router.get('/bestsellers', getBestsellers);
 router.get('/get-one/:id', getProductById);
 //! admin routes
