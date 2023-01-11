@@ -33,6 +33,7 @@
 
 
 .skeleton-wrapper {
+    overflow-x   : hidden;
     margin       : 20px auto;
     padding      : 10px 15px;
     border-radius: 4px;
