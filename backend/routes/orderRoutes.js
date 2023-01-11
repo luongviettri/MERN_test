@@ -17,9 +17,9 @@ const {
 
 //! user routes
 router.use(verifyIsLoggedIn);
-router.get('/', getUserOrders);
+router.route('/').get(getUserOrders).post(createOrder);
+
 router.get('/user/:id', getOrder);
-router.post('/', createOrder);
 router.put('/paid/:id', updateOrderToPaid);
 //! admin routes
 router.use(verifyIsAdmin);

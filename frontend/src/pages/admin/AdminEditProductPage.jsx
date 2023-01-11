@@ -16,12 +16,13 @@ const fetchProduct = async (productId) => {
   return data;
 };
 
-const updateProductApiRequest = catchAsync(async (productId, formInputs) => {
+const updateProductApiRequest = async (productId, formInputs) => {
   const { data } = await trackPromise(
     productService.updateProduct(productId, formInputs)
   );
+  console.log('data: ', data);
   return data;
-});
+};
 
 const AdminEditProductPage = () => {
   const { categories } = useSelector((state) => state.getCategoriesReducer);

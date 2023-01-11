@@ -48,6 +48,7 @@ exports.createOne = (Model) => {
 exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     let query = Model.findById(req.params.id);
+
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
     //! sẽ có trường hợp tour ko tìm thấy==> tour = null, nhưng tour = null ko phải lỗi==>ko nhảy vô phần catch==>  phải bắt lỗi
@@ -55,7 +56,6 @@ exports.getOne = (Model, popOptions) =>
       return next(new AppError('No document found with that ID', 404));
     }
     res.status(200).json({
-      status: 'success',
       data: {
         data: doc,
       },
@@ -67,34 +67,19 @@ exports.getAll = (Model) =>
     //! to allow for nested GET reviews on product (hack)
     let filter = {};
 
-    if (req.params.productID) filter = { product: req.params.tourId };
+    if (req.params.productID) filter = { product: req.params.productID };
 
     //! EXECUTE QUERY
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
+      .rating()
+      .category()
+      .attributes()
       .limitFields()
       .paginate()
       .sort();
 
     //! params (RẤT cần tách ra url riêng )
-
-    if (req.params.searchQuery) {
-      filter = { ...filter, score: { $meta: 'textScore' } };
-      const select = {
-        score: { $meta: 'textScore' },
-      };
-      Model.select(select);
-      const sort = { score: { $meta: 'textScore' } };
-      Model.sort(sort);
-    }
-
-    if (req.params.categoryName) {
-      const { categoryName } = req.params;
-
-      const condition = categoryName.replace(/,/g, '/');
-      const regEx = new RegExp(`^${condition}`);
-      Model.find({ category: regEx });
-    }
 
     // const doc = await features.query.explain();
     const doc = await features.query;

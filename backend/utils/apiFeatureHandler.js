@@ -1,12 +1,3 @@
-const filterComparison = (queryObject) => {
-  let queryStr = JSON.stringify(queryObject);
-
-  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-
-  const newQueryObject = JSON.parse(queryStr);
-  return newQueryObject;
-};
-
 const createAttributeArrayHandler = (attributes) => {
   const attrs = attributes.split(',').reduce((acc, item) => {
     const a = item.split('-');
@@ -24,4 +15,4 @@ const createAttributeArrayHandler = (attributes) => {
   return attrs;
 };
 
-module.exports = { filterComparison, createAttributeArrayHandler };
+module.exports = { createAttributeArrayHandler };

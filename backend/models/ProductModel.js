@@ -68,7 +68,7 @@ const Product = mongoose.model('Product', productSchema);
 
 productSchema.index(
   { name: 'text', description: 'text' },
-  { name: 'TextIndex' }
+  { name: 'TextIndex' } //! đặt tên cho index: https://www.mongodb.com/docs/manual/tutorial/avoid-text-index-name-limit/
 );
 
 productSchema.index({ 'atts.key': 1, 'atts.value': 1 });

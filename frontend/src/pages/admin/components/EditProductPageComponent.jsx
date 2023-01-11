@@ -116,6 +116,8 @@ export default function EditProductPageComponent({
       // updateProductApiRequest(id, formInputs).then((data) => {
       //   if (data.message === 'product updated') navigate('/admin/products');
       // });
+      console.log('id: ', id);
+      console.log('formInputs: ', formInputs);
       const data = await updateProductApiRequest(id, formInputs);
       console.log('data: ', data);
       if (data.message === 'product updated') navigate('/admin/products');

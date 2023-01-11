@@ -21,7 +21,7 @@ const createProductApiRequest = async (formInputs) => {
 };
 
 const AdminCreateProductPage = () => {
-  const { categories } = useSelector((state) => state.getCategories);
+  const { categories } = useSelector((state) => state.getCategoriesReducer);
   const dispatch = useDispatch();
   return (
     <CreateProductPageComponent

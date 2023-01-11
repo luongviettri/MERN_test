@@ -66,9 +66,9 @@ const ProductDetailsPageComponent = ({
   });
 
   const handleGetProductDetail = catchAsync(async (id) => {
-    const { data: productDetail } = await trackPromise(
-      productService.getProductDetail(id)
-    );
+    const { data } = await productService.getProductDetail(id);
+    const productDetail = data.data.data;
+
     setProduct(productDetail);
   });
 

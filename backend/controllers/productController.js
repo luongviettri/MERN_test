@@ -174,17 +174,19 @@ const getProducts = async (req, res, next) => {
 
 const getProductsRefactor = factory.getAll(Product);
 
-const getProductById = async (req, res, next) => {
-  try {
-    const productID = req.params.id;
-    const product = await Product.findById(productID)
-      .populate('reviews')
-      .orFail();
-    res.json(product);
-  } catch (error) {
-    next(error);
-  }
-};
+// const getProductById = async (req, res, next) => {
+//   try {
+//     const productID = req.params.id;
+//     const product = await Product.findById(productID)
+//       .populate('reviews')
+//       .orFail();
+//     res.json(product);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+const getProductById = factory.getOne(Product, 'reviews');
 
 const getBestsellers = async (req, res, next) => {
   try {
@@ -274,6 +276,7 @@ const adminUpdateProduct = async (req, res, next) => {
       product.attrs = [];
     }
     await product.save();
+    console.log('--------------here---------------');
     res.json({
       message: 'product updated',
     });

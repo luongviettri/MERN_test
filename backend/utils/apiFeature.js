@@ -1,14 +1,8 @@
-const {
-  filterComparison,
-  createAttributeArrayHandler,
-} = require('./apiFeatureHandler');
-
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
   }
-  //! price -- rating -- category -- atts -- sort
 
   filter() {
     //todo:1A) Filtering
@@ -16,51 +10,80 @@ class APIFeatures {
     //! filtersUrl = "&price=60&rating=1,2,3&category=a,b,c,d&attrs=color-red-blue,size-1TB-2TB";
 
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const excludedFields = [
+      'pageNum',
+      'sort',
+      'limit',
+      'fields',
+      'rating',
+      'category',
+      'attrs',
+    ];
     excludedFields.forEach((el) => delete queryObj[el]); //! xóa trường nào có trong mảng này vì chỉ thực hiện nhiệm vụ lọc
 
     //todo:1B) Advanced filtering (<, >,<=, >= )
     //* url sẽ như này: price[lte]=priceValue--> chuyển thành có $lte mới sử dụng được
 
-    let newQueryObject = filterComparison(queryObj);
+    let queryStr = JSON.stringify(queryObj);
 
-    //todo :1C)xử lý tìm mảng
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    //*  nếu có rating thì chuyển rating sang dạng mảng
-    if (newQueryObject.rating) {
-      //! vì app có chọn nhiều rating nên ko thể chỉ dùng > <
-      const rating = newQueryObject.rating.split(',');
-      newQueryObject = { ...newQueryObject, rating: rating };
-    }
+    const newQueryObject = JSON.parse(queryStr);
 
-    //* nếu có category thì chuyển sang dạng mảng
-    if (newQueryObject.category) {
-      const categories = newQueryObject.category.split(',').map((item) => {
-        return new RegExp(`^${item}`); //! dùng để search tất cả các category bắt đầu = condition cần tìm
-      });
-      newQueryObject = { ...newQueryObject, category: categories };
-    }
-
-    //* xử lý tìm attribute khá phức tạp chỗ này
-    if (newQueryObject.attrs) {
-      const attrs = createAttributeArrayHandler(newQueryObject.attrs);
-
-      delete newQueryObject.attrs; //! phải delete atts cũ đi vì atts đã tách riêng ra
-
-      newQueryObject = {
-        $and: [newQueryObject, ...attrs], //! chỗ này phải dùng cách xài mảng vì nếu xài object thì sẽ đụng trường hợp tạo nhiều object có key là attrs ---> js chỉ giữ lại key cuối cùng ---> sai
-      };
-    }
     this.query = this.query.find(newQueryObject);
 
     return this;
   }
 
+  rating() {
+    console.log('------------vao rating-------------');
+    if (this.queryString.rating) {
+      console.log('------------ rating-------------');
+      //! vì app có chọn nhiều rating nên ko thể chỉ dùng > <
+      const rating = this.queryString.rating.split(',');
+      console.log('rating: ', rating);
+      this.query = this.query.find({ rating: rating });
+    }
+    return this;
+  }
+
+  category() {
+    if (this.queryString.category) {
+      const categories = this.queryString.category.split(',').map((item) => {
+        return new RegExp(`^${item}`); //! dùng để search tất cả các category bắt đầu = condition cần tìm
+      });
+
+      this.query = this.query.find({ category: categories });
+    }
+    return this;
+  }
+
+  attributes() {
+    if (this.queryString.attrs) {
+      const attrs = this.queryString.attrs.split(',').reduce((acc, item) => {
+        const a = item.split('-');
+        const values = [...a];
+        values.shift(); // removes first item
+        const a1 = {
+          attrs: { $elemMatch: { key: a[0], value: { $in: values } } },
+        };
+        acc.push(a1);
+        // console.dir(acc, { depth: null });
+        // ! mỗi lần lặp sẽ tạo dc object {attrs : {key và value của sản phẩm}}
+        //! ==> cuối cùng tạo thành một mảng các object có dạng {attrs : {key và value của sản phẩm}}--> lấy mảng này đi query
+        return acc;
+      }, []);
+      this.query = this.query.find({ $and: [...attrs] });
+      // return attrs;
+    }
+    return this;
+  }
+
   sort() {
     //todo:2) Sorting
-
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split('_');
+      console.log('------------sort---------------', sortBy);
       const [sortKey, sortValue] = sortBy;
       const sortObject = { [sortKey]: Number(sortValue) };
       console.log('sortObject: ', sortObject);
@@ -76,7 +99,6 @@ class APIFeatures {
 
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(',').join(' ');
-      console.log('fields: ', fields);
       this.query = this.query.select(fields); //! sẽ project( phép chiếu) và lấy ra các field(trường)
     } else {
       this.query = this.query.select('-__v'); //! thêm dấu - làm prefix thì sẽ sẽ ko hiển thị ra khi gửi về user
