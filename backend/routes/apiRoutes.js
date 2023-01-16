@@ -9,6 +9,7 @@ const categoryRoutes = require('./categoryRoutes');
 
 //! tìm cách tối ưu hóa route này ? có cần gọi API để xóa cookie ?
 app.get('/logout', (req, res) => {
+  console.log('Vô đây để xóa cookie');
   return res.clearCookie('access_token').send('access token cleared');
 });
 

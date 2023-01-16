@@ -1,7 +1,10 @@
 require('dotenv').config();
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const path = require('path');
-
+const rateLimit = require('express-rate-limit');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
@@ -12,12 +15,31 @@ const connectDB = require('./config/db');
 const apiRoutes = require('./routes/apiRoutes');
 
 const app = express();
-app.use(helmet());
-// const port = 5000;
+
+app.use(helmet()); //!  Security HTTP headers
+
+//! start chống tấn công bruce attack
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Quá nhiều request, thử lại sau 1 giờ nữa',
+});
+app.use('/api', limiter);
+//! end chống tấn công bruce attack
+
 const httpServer = createServer(app);
 global.io = new Server(httpServer);
 
-app.use(express.json());
+//! start thực hiện xử lý body dc gửi từ client, 1 là limit 10kb, 2 là lọc dữ liệu
+app.use(express.json({ limit: '10kb' })); //*: body parser, đọc dữ liệu data từ body và đưa vào req.body
+
+//todo: lọc dữ liệu để chống noSQL query injection
+app.use(mongoSanitize());
+//todo: lọc dữ liệu để chống XSS
+app.use(xss());
+
+//! end
+
 app.use(cookieParser()); //! dùng để phân tích cookie từ client gửi lên
 app.use(fileUpload()); //! dùng để thực hiện upload ảnh
 
@@ -27,6 +49,8 @@ let activeChats = [];
 function get_random(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
+
+app.use(hpp()); //! prevent parameter pollution để tránh lặp code trên url dẫn đến crash application, có thể thêm whitelist nhưng ko cần  vì ko có trường hợp nào url cần duplicate thuộc tính, nhưng để làm query đơn giản thì phải làm giống app tour thay vì tạo mảng và query
 
 // eslint-disable-next-line no-undef
 io.on('connection', (socket) => {

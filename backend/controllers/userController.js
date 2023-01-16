@@ -1,9 +1,9 @@
 const { ObjectId } = require('mongodb');
 const User = require('../models/UserModel');
 const Review = require('../models/ReviewModel');
-const { hashPassword, comparePasswords } = require('../utils/hashPassword');
 const generateAuthToken = require('../utils/generateAuthToken');
 const Product = require('../models/ProductModel');
+const catchAsync = require('../utils/catchAsync');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -14,65 +14,62 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-const registerUser = async (req, res, next) => {
-  try {
-    const { name, lastName, email, password } = req.body;
-    //! nếu thiếu required fields
-    if (!(name && lastName && email && password)) {
-      return res.status(400).send('All inputs are required');
-    }
-
-    const userExists = await User.findOne({ email });
-    //!nếu trùng email
-    if (userExists) {
-      return res.status(400).send('user exists');
-    }
-
-    //! tạo new user. ko thực tế vì user model ko có phần nhập lại mật khẩu để so sánh
-    //todo: hash password trước khi tạo, phần hash này cần đặt trong user model để tối ưu code
-    const hashedPassword = hashPassword(password);
-    //todo: tạo user với password đã được hash
-    const user = await User.create({
-      name,
-      lastName,
-      email: email.toLowerCase(),
-      password: hashedPassword,
-    });
-    //! JWT
-    const JWTtoken = generateAuthToken(
-      user._id,
-      user.name,
-      user.lastName,
-      user.email,
-      user.isAdmin
-    );
-    //! cookieOptions
-    const cookieOptions = {
-      //todo: attributes của cookie, cần đọc doc thêm, căn bản là tăng secure
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    };
-    //! gửi về user
-    res
-      //! cookie được tạo để sau này tự động log in ở phía front-end
-      .cookie('access_token', JWTtoken, cookieOptions)
-      .status(201)
-      .json({
-        //! chỗ này cần tối ưu code, mục đích của đoạn code này chỉ để tránh hiển thị password--> tối ưu trong user model
-        success: 'User created',
-        userCreated: {
-          _id: user._id,
-          name: user.name,
-          lastName: user.lastName,
-          email: user.email,
-          isAdmin: user.isAdmin,
-        },
-      });
-  } catch (error) {
-    next(error);
+const registerUser = catchAsync(async (req, res, next) => {
+  const { name, lastName, email, password } = req.body;
+  //! nếu thiếu required fields
+  if (!(name && lastName && email && password)) {
+    return res.status(400).send('All inputs are required');
   }
-};
+
+  const userExists = await User.findOne({ email });
+  //!nếu trùng email
+  if (userExists) {
+    return res.status(400).send('user exists');
+  }
+
+  //! tạo new user. ko thực tế vì user model ko có phần nhập lại mật khẩu để so sánh
+  // todo: hash password trước khi tạo, phần hash này cần đặt trong user model để tối ưu code
+  // const hashedPassword = hashPassword(password);
+  //todo: tạo user với password đã được hash
+  const user = await User.create({
+    name,
+    lastName,
+    email: email.toLowerCase(),
+    password: password,
+  });
+  //! JWT
+  const JWTtoken = generateAuthToken(
+    user._id,
+    user.name,
+    user.lastName,
+    user.email,
+    user.isAdmin
+  );
+  //! Cookie configuration
+  const cookieOptions = {
+    //todo: attributes của cookie, cần đọc doc thêm, căn bản là tăng secure
+    httpOnly: true, //! cookie sẽ ko thể dc tiếp cận hay sửa đổi theo bất kỳ cách nào từ trình duyệt
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), //! khỏi tạo var environment vì phải deploy lại
+  };
+  //! gửi về user
+  res
+    //! cookie được tạo để sau này tự động log in ở phía front-end
+    .cookie('access_token', JWTtoken, cookieOptions)
+    .status(201)
+    .json({
+      //! chỗ này cần tối ưu code, mục đích của đoạn code này chỉ để tránh hiển thị password--> tối ưu trong user model
+      success: 'User created',
+      userCreated: {
+        _id: user._id,
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        isAdmin: user.isAdmin,
+      },
+    });
+});
 
 const loginUser = async (req, res, next) => {
   try {
@@ -82,7 +79,7 @@ const loginUser = async (req, res, next) => {
       return res.status(400).send('All inputs are required');
     }
     const user = await User.findOne({ email });
-    if (user && comparePasswords(password, user.password)) {
+    if (user && (await user.correctPassword(password, user.password))) {
       //! xử lí so sánh password
       //something here
       //! cookieOptions
@@ -146,9 +143,9 @@ const updateUserProfile = async (req, res, next) => {
     user.city = req.body.city;
     user.state = req.body.state;
     //! chỗ đổi cả mật khẩu thế này ko thực tế
-    if (req.body.password !== user.password) {
-      user.password = hashPassword(req.body.password);
-    }
+    // if (req.body.password !== user.password) {
+    //   user.password = hashPassword(req.body.password);
+    // }
 
     await user.save();
 
