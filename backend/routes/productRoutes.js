@@ -34,8 +34,8 @@ router.get(
 router.get('/category/:categoryName', productController.getProducts);
 router.get('/search/:searchQuery', productController.getProducts);
 
-// router.get('/', getProducts); //! tạm thời dùng
-router.get('/', productController.getProductsRefactor); //!  đã refactor nhưng cần tiếp tục tách phần param
+router.get('/', productController.getProducts); //! tạm thời dùng
+// router.get('/', productController.getProducts); //!  đã refactor nhưng cần tiếp tục tách phần param
 
 // router.get('/testRefactor', getProductsRefactor);
 
