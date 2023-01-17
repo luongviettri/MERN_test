@@ -8,13 +8,14 @@ const generateAuthToken = require('../utils/generateAuthToken');
 
 //! create a Redis client - connect to Redis (will be done later in this tutorial)
 
-const redisClient = new Redis({
+// const redisClient = new Redis();
+
+const redisClient = redis.createClient({
   host: 'redis-10505.c252.ap-southeast-1-1.ec2.cloud.redislabs.com',
   port: 10505,
   password: '8s0eGnLgeqiWpqdm1ARlUsl5FkGbLZAg',
-});
-
-// const redisClient = redis.createClient({ enableOfflineQueue: false }); //! tạm thời để cái này
+  enableOfflineQueue: false,
+}); //! tạm thời để cái này
 
 //! nếu không có kết nối đến redis server thì quăng lỗi ra
 redisClient.on('error', (err) => {
@@ -57,6 +58,7 @@ const getEmailIPkey = (email, ip) => `${email}_${ip}`;
 //! rate-limiting middleware controller
 exports.loginRouteRateLimit = async (req, res, next) => {
   const ipAddr = req.ip;
+  console.log('ipAddr: ', ipAddr);
   const emailIPkey = getEmailIPkey(req.body.email, ipAddr);
 
   //todo: get keys for attempted login

@@ -20,7 +20,7 @@ const apiRoutes = require('./routes/apiRoutes');
 const app = express();
 
 app.use(helmet()); //!  Security HTTP headers
-
+app.set('trust proxy', true);
 //! start chống tấn công bruce attack
 const limiter = rateLimit({
   max: 100,
