@@ -71,61 +71,54 @@ const registerUser = catchAsync(async (req, res, next) => {
     });
 });
 
-const loginUser = async (req, res, next) => {
-  try {
-    const { email, password, doNotLogout } = req.body;
-    //! nếu ko có email hoặc pass dc gửi lên
-    if (!(email && password)) {
-      return res.status(400).send('All inputs are required');
-    }
-    const user = await User.findOne({ email });
-    if (user && (await user.correctPassword(password, user.password))) {
-      //! xử lí so sánh password
-      //something here
-      //! cookieOptions
-      let cookieParams = {
-        //todo: attributes của cookie, cần đọc doc thêm, căn bản là tăng secure
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-      };
-      //! ghi nhớ log in
-      if (doNotLogout) {
-        const timeLogin = 1000 * 60 * 60 * 24 * 7; //! 7 days
-        cookieParams = { ...cookieParams, maxAge: timeLogin }; // 1000=1ms
-      }
-      return res
-        .cookie(
-          'access_token',
-          generateAuthToken(
-            user._id,
-            user.name,
-            user.lastName,
-            user.email,
-            user.isAdmin
-          ),
-          cookieParams
-        )
-        .json({
-          success: 'user logged in',
-          userLoggedIn: {
-            _id: user._id,
-            name: user.name,
-            lastName: user.lastName,
-            email: user.email,
-            isAdmin: user.isAdmin,
-            doNotLogout,
-          },
-        });
-    }
-    return res.status(401).send('wrong credentials');
-  } catch (error) {
-    console.log(
-      'nhay vo day------------------------------------------------------------------'
-    );
-    next(error);
+const loginUser = catchAsync(async (req, res, next) => {
+  const { email, password, doNotLogout } = req.body;
+  //! nếu ko có email hoặc pass dc gửi lên
+  if (!(email && password)) {
+    return res.status(400).send('All inputs are required');
   }
-};
+  const user = await User.findOne({ email });
+  if (user && (await user.correctPassword(password, user.password))) {
+    //! xử lí so sánh password
+    //something here
+    //! cookieOptions
+    let cookieParams = {
+      //todo: attributes của cookie, cần đọc doc thêm, căn bản là tăng secure
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    };
+    //! ghi nhớ log in
+    if (doNotLogout) {
+      const timeLogin = 1000 * 60 * 60 * 24 * 7; //! 7 days
+      cookieParams = { ...cookieParams, maxAge: timeLogin }; // 1000=1ms
+    }
+    return res
+      .cookie(
+        'access_token',
+        generateAuthToken(
+          user._id,
+          user.name,
+          user.lastName,
+          user.email,
+          user.isAdmin
+        ),
+        cookieParams
+      )
+      .json({
+        success: 'user logged in',
+        userLoggedIn: {
+          _id: user._id,
+          name: user.name,
+          lastName: user.lastName,
+          email: user.email,
+          isAdmin: user.isAdmin,
+          doNotLogout,
+        },
+      });
+  }
+  return res.status(401).send('wrong credentials');
+});
 
 const updateUserProfile = async (req, res, next) => {
   try {

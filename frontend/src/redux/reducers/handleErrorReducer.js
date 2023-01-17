@@ -20,7 +20,8 @@ export default (state = initialState, { type, payload }) => {
           break;
 
         default:
-          toast.error('Đã có lỗi xảy ra, vui lòng thử lại');
+          console.log(payload);
+          toast.error(payload);
           break;
       }
       return {

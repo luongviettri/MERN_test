@@ -39,7 +39,7 @@ class UserService extends baseService {
   //! end user
 
   //! start admin
-  
+
   fetchUserAdmin = (userId) => {
     return this.get(`api/users/${userId}`);
   };

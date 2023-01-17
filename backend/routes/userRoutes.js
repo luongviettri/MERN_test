@@ -10,6 +10,7 @@ const {
   updateUser,
   deleteUser,
 } = require('../controllers/userController');
+const rateLimitController = require('../middleware/rateLimitController');
 const {
   verifyIsLoggedIn,
   verifyIsAdmin,
@@ -19,7 +20,8 @@ const router = express.Router();
 
 //! not logged in routes
 router.post('/register', registerUser);
-router.post('/login', loginUser);
+// router.post('/login', loginUser);
+router.post('/login', rateLimitController.loginRouteRateLimit);
 
 //! user logged in routes:
 router.use(verifyIsLoggedIn);
