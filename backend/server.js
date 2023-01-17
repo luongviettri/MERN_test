@@ -7,7 +7,7 @@ const path = require('path');
 const rateLimit = require('express-rate-limit');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const Redis = require('redis');
+// const Redis = require('redis');
 
 const express = require('express');
 const fileUpload = require('express-fileupload');
@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes/apiRoutes');
 
-const redisClient = Redis.createClient();
+// const redisClient = Redis.createClient();
 
 const app = express();
 
