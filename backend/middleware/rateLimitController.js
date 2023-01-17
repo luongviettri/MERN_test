@@ -1,15 +1,20 @@
 const redis = require('redis');
 const { RateLimiterRedis } = require('rate-limiter-flexible');
+const fs = require('fs');
+const Redis = require('ioredis');
 const passport = require('passport');
 const User = require('../models/UserModel');
 const generateAuthToken = require('../utils/generateAuthToken');
 
 //! create a Redis client - connect to Redis (will be done later in this tutorial)
-// const redisClient = redis.createClient(process.env.REDIS_URL, {
-//   enable_offline_queue: false,
-// });
 
-const redisClient = redis.createClient({ enableOfflineQueue: false }); //! tạm thời để cái này
+const redisClient = new Redis({
+  host: 'redis-10505.c252.ap-southeast-1-1.ec2.cloud.redislabs.com',
+  port: 10505,
+  password: '8s0eGnLgeqiWpqdm1ARlUsl5FkGbLZAg',
+});
+
+// const redisClient = redis.createClient({ enableOfflineQueue: false }); //! tạm thời để cái này
 
 //! nếu không có kết nối đến redis server thì quăng lỗi ra
 redisClient.on('error', (err) => {
